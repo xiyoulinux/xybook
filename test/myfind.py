@@ -21,11 +21,11 @@ def find(key):
 >>>>>>> .r7
 if __name__=='__main__':
 <<<<<<< .mine
-    	fp=open("list.txt","r")
+    	fp=open("list.list","r")
     	find(key)
     	fp.close()
 =======
-	fp=open("list.txt","r")
+	fp=open("list.list","r")
 	find(key)
 	fp.close()
 >>>>>>> .r7

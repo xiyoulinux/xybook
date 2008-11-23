@@ -19,6 +19,6 @@ def searcher(path):
 	os.path.walk(path,visitor,"")
 
 if __name__ == '__main__' :
-	fp = file("list.txt",'w')
+	fp = file("list.list",'w')
 	searcher(path)
 	fp.close()

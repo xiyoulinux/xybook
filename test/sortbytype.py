@@ -2,7 +2,7 @@
 #-*- coding: utf-8 -*-
 import os
 
-f = open('list.txt','r')
+f = open('list.list','r')
 alllines=f.readlines()
 
 f.close()

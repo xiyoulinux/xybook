@@ -6,7 +6,7 @@ import os
 def add2group():
 	dir=raw_input('please input the name of new group:')
 	p=open(dir,'a')
-	f=open('list.txt','r')
+	f=open('list.list','r')
 	filename=raw_input('please input the filename you want to add to the group:')
 	for line in f.readlines():
 		if filename in os.path.splitext(os.path.basename(line))[0]:

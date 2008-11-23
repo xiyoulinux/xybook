@@ -13,6 +13,6 @@ list.pack(side=LEFT)
 scroll.pack(side=RIGHT, fill=Y)
 
 for item in os.listdir(os.getcwd()):
-	if os.path.splitext(item)[1] in ('.txt',):
+	if os.path.splitext(item)[1] in ('.list',):
 		list.insert(END,item)
 root.mainloop()

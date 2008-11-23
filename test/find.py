@@ -6,6 +6,6 @@ for line in fp.readlines():
     if key in line :
     print line 
 if __name__ == '__main__' :
-fp=open("list.txt",'r')
+fp=open("list.list",'r')
 find(key)
 fp.close()  
