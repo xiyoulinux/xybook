@@ -1,18 +1,20 @@
 #!/usr/bin/env python
 #-*- coding: utf-8 -*-
-from Tkinter import *
 import os
+import os.path
+import wx
 
-root = Tk()
-#root.option_readfile('optionDB')
-root.title('Listbox')
-list = Listbox(root, width=30,height=50)
-scroll = Scrollbar(root, command=list.yview)
-list.configure(yscrollcommand=scroll.set)
-list.pack(side=LEFT)
-scroll.pack(side=RIGHT, fill=Y)
+class ListBoxFrame(wx.Frame):
+	def __init__(self):
+		wx.Frame.__init__(self, None, -1, 'List Box Example',size=(250, 200))
+		panel = wx.Panel(self, -1)
+		f=open('list.list','r')
+		sampleList = [os.path.splitext(item)[0] for item in os.listdir(os.getcwd()) if os.path.splitext(item)[1] in ('.list',)]
+		f.close()
+		listBox = wx.ListBox(panel, -1, (20, 20), (100, 250), sampleList,wx.LB_SINGLE)
+		listBox.SetSelection(3)
 
-for item in os.listdir(os.getcwd()):
-	if os.path.splitext(item)[1] in ('.list',):
-		list.insert(END,item)
-root.mainloop()
+if __name__ == '__main__':
+	app = wx.PySimpleApp()
+	ListBoxFrame().Show()
+	app.MainLoop()
