@@ -1,4 +1,4 @@
-#!usr/bin/env python
+#!/usr/bin/python
 import os
 key="xiyou"
 def find(key):
