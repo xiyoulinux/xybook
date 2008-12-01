@@ -1,3 +1,8 @@
+#!/usr/bin/env python
+#-*- coding: utf-8 -*-
+
+import os
+import os.path
 import wx
 #encoding=utf-8
 
@@ -12,7 +17,11 @@ class MyFrame(wx.Frame):
 		textLbl= wx.TextCtrl(panel, -1, "", size=(200,-1));
 		findBtn= wx.Button(panel, -1, "search");
 		
-		text1 = wx.StaticText(panel, -1, "tree", size=(150,410))
+		sampleList = [os.path.splitext(item)[0] for item in os.listdir(os.getcwd()) if os.path.splitext(item)[1] in ('.list',)]
+		listBox = wx.ListBox(panel, -1, (5, 60), (200, 400), sampleList,wx.LB_SINGLE)
+		listBox.SetSelection(0)
+
+		text1 = wx.StaticText(panel, -1, "list", size=(150,410))
 		text2 = wx.StaticText(panel, -1, "pan_meng", size=(-1,410))
 		text3 = wx.StaticText(panel, -1, "status")
 			
