@@ -22,6 +22,9 @@ class ToolbarFrame(wx.Frame):
 		cstSizer.Add(findBtn, 0, wx.LEFT|wx.RIGHT, 5)
 		addrSizer.Add(cstSizer, 0, wx.EXPAND)
 		mainSizer.Add(addrSizer, 0, wx.EXPAND|wx.ALL, 10)
+		
+		
+		
 		menuBar=wx.MenuBar()
 		menu1=wx.Menu("")
 		menuBar.Append(menu1,'Finding ')
