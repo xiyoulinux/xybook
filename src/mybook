@@ -24,8 +24,8 @@ class MyFrame(wx.Frame):
         # Tool Bar
         self.frame_1_toolbar = wx.ToolBar(self, -1)
         self.SetToolBar(self.frame_1_toolbar)
-        t1 = self.frame_1_toolbar.AddLabelTool(wx.NewId(), u"整理", wx.Bitmap("/home/lilei/xybook/src/picture/1.jpeg", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "", "")
-        t2 = self.frame_1_toolbar.AddLabelTool(wx.NewId(), u"关于", wx.Bitmap("/home/lilei/xybook/src/picture/2.jpeg", wx.BITMAP_TYPE_ANY), wx.Bitmap("/home/lilei/xybook/src/picture/2.jpeg", wx.BITMAP_TYPE_ANY), wx.ITEM_NORMAL, "", "")
+        t1 = self.frame_1_toolbar.AddLabelTool(wx.NewId(), u"整理", wx.Bitmap("./picture/1.jpeg", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "", "")
+        t2 = self.frame_1_toolbar.AddLabelTool(wx.NewId(), u"关于", wx.Bitmap("./picture/2.jpeg", wx.BITMAP_TYPE_ANY), wx.Bitmap("./picture/2.jpeg", wx.BITMAP_TYPE_ANY), wx.ITEM_NORMAL, "", "")
         # Tool Bar end
         self.label_1 = wx.StaticText(self, -1, u"路径", style=wx.ALIGN_CENTRE)
         self.text_ctrl_1 = wx.TextCtrl(self, -1, "")
