@@ -8,7 +8,7 @@ import os
 import os.path
 import sys
 import search
-import find
+#import find
 
 # begin wxGlade: extracode
 # end wxGlade
@@ -39,7 +39,6 @@ class MyFrame(wx.Frame):
         self.grid_1 = wx.grid.Grid(self, -1, size=(1, 1))
         self.grid_1.CreateGrid(0,1)		
         self.grid_1.SetColLabelValue(0, '名称')
-#        self.grid_1.SetColSize(1, 400)
         self.grid_1.SetColSize(0, 300)
         self.Bind(wx.EVT_LISTBOX, self.ButtonClick, self.list_box_1)
 
@@ -129,8 +128,28 @@ class MyFrame(wx.Frame):
 
     def find(self, event): # wxGlade: MyFrame.<event_handler>
         key = self.text_ctrl_3.GetValue()
-        find.keyfind(key)
+        fp = open("list.list", 'r')
+        bo=[]
+        count=0
+        for line in fp:
+            if key in line:
+                count+=1
+                bo.append(line)
+        if count==0:
+             bo.append('Sorry,the book does not exist!')
+        fp.close() 
+        self.grid_1.Destroy()
+        self.grid_1 = wx.grid.Grid(self, -1, size=(1, 1))
+        self.__do_layout()
+        self.grid_1.CreateGrid(len(bo),1)
+        self.grid_1.SetColLabelValue(0, '名称')
+        self.grid_1.SetColSize(0, 500)
+        for row in range(len(bo)):
+            for col in range(1):
+                self.grid_1.SetCellValue(row, col,"%s" % bo[row])
         event.Skip()
+
+
 
     def move(self, event): # wxGlade: MyFrame.<event_handler>
         print "Event handler `move' not implemented"
@@ -150,7 +169,6 @@ class MyFrame(wx.Frame):
         wx.AboutBox(info)
         event.Skip()
 
-        event.Skip()
 
 # end of class MyFrame
 
