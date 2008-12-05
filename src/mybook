@@ -35,8 +35,15 @@ class MyFrame(wx.Frame):
         self.label_3 = wx.StaticText(self, -1, u"请输入关键字", style=wx.ALIGN_CENTRE)
         self.text_ctrl_3 = wx.TextCtrl(self, -1, "")
         self.button_2 = wx.Button(self, -1, u"搜索关键字")
-        self.list_box_1 = wx.ListBox(self, -1, choices=[])
+        self.list_box_1 = wx.ListBox(self, -1, choices=[item for item in os.listdir(os.getcwd()) if os.path.splitext(item)[1] in ('.list',)])
         self.grid_1 = wx.grid.Grid(self, -1, size=(1, 1))
+        self.grid_1.CreateGrid(0,1)		
+        self.grid_1.SetColLabelValue(0, '名称')
+#        self.grid_1.SetColSize(1, 400)
+        self.grid_1.SetColSize(0, 300)
+        self.Bind(wx.EVT_LISTBOX, self.ButtonClick, self.list_box_1)
+
+
 
         self.__set_properties()
         self.__do_layout()
@@ -79,6 +86,27 @@ class MyFrame(wx.Frame):
         self.SetSizer(sizer_1)
         self.Layout()
         # end wxGlade
+
+
+    def ButtonClick(self, event):
+        self.grid_1.Destroy()
+        self.grid_1 = wx.grid.Grid(self, -1, size=(1, 1))
+        self.__do_layout()
+        n=self.list_box_1.GetSelection()
+        sampleList = [item for item in os.listdir(os.getcwd()) if os.path.splitext(item)[1] in ('.list',)]
+        f = open(sampleList[n],'r')
+        bo=[os.path.splitext(os.path.basename(line))[0] for line in f]
+        f.close()
+        self.grid_1.CreateGrid(len(bo),1)
+        self.grid_1.SetColLabelValue(0, '名称')
+        self.grid_1.SetColSize(0, 300)
+        for row in range(len(bo)):
+            for col in range(1):
+                self.grid_1.SetCellValue(row, col,"%s" % bo[row])
+
+
+
+
 
     def search(self, event): # wxGlade: MyFrame.<event_handler>
         path = self.text_ctrl_1.GetValue()
