@@ -5,10 +5,9 @@ import os,sys
 
 
 def visitfile(fname,format):
-	if format in os.path.splitext(fname)[1]:
-		fp = open("list.list",'a')
+	if format in os.path.splitext(fname)[1]:		
 		print >> fp,fname
-		fp.close()
+		
 
 def visitor(arg,dirname,fname):
 	for name in fname:
@@ -20,9 +19,9 @@ def visitor(arg,dirname,fname):
 
 
 def searcher(path, format):
-	
+	fp = open("list.list",'a')
 	os.path.walk(path,visitor,format)
-
+	fp.close()
 
 
 if __name__ == '__main__' :
