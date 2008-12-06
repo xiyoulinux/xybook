@@ -1,11 +1,15 @@
 #-*- coding: utf-8 -*-
 
 import os,sys
+import string
 
 
 
 def visitfile(fname,format):
-	if format in os.path.splitext(fname)[1]:		
+	#print os.path.splitext(fname)[1].translate(unknow, '.') 
+	unknow = string.maketrans('','')
+	loop = '.'
+	if os.path.splitext(fname)[1].translate(unknow,loop) in format :
 		print >> fp,fname
 		
 
@@ -14,17 +18,17 @@ def visitor(arg,dirname,fname):
 		fpath = os.path.join(dirname,name)
 		if not os.path.isdir(fpath):
 			visitfile(fpath,arg)
-#			if format in os.path.splitext(fname)[1]:
-#				print >> fp,fname
+			
 
 
 def searcher(path, format):
-	fp = open("list.list",'a')
+	fp = open("list.list",'w')
 	os.path.walk(path,visitor,format)
 	fp.close()
+	
 
 
 if __name__ == '__main__' :
-	fp = file("list.list",'w')
+	fp = open("list.list",'w')
 	searcher(path)
 	fp.close()
