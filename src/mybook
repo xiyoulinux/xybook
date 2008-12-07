@@ -264,7 +264,7 @@ class MyFrame(wx.Frame):
         bo=[]
         count=0
         for line in fp.readlines():
-            if key in line.decode("utf-8"):
+            if key in os.path.splitext(os.path.basename(line))[0].decode("utf-8"):
                 count+=1
                 bo.append(line)
         if count==0:
