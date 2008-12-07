@@ -6,8 +6,9 @@ import wx
 import wx.grid
 import os
 import os.path
-import sys
 import search
+import sys, glob, random
+import data
 import shutil
 #import find
 
@@ -20,6 +21,10 @@ class MyFrame(wx.Frame):
     def __init__(self, *args, **kwds):
         # begin wxGlade: MyFrame.__init__
         kwds["style"] = wx.DEFAULT_FRAME_STYLE
+#启动画面splash
+        bmp = wx.Image("./picture/run.png").ConvertToBitmap()
+        wx.SplashScreen(bmp, wx.SPLASH_CENTRE_ON_SCREEN | wx.SPLASH_TIMEOUT,1000, None, -1)
+        wx.Yield()
         wx.Frame.__init__(self, *args, **kwds)
 
         # Tool Bar
@@ -37,13 +42,33 @@ class MyFrame(wx.Frame):
         self.text_ctrl_3 = wx.TextCtrl(self, -1, "")
         self.button_2 = wx.Button(self, -1, u"搜索关键字")
         self.list_box_1 = wx.ListBox(self, -1, choices=[item for item in os.listdir(os.getcwd()) if os.path.splitext(item)[1] in ('.list',)])
-        self.grid_1 = wx.grid.Grid(self, -1, size=(1, 1))
-        self.grid_1.CreateGrid(0,1)
-        self.grid_1.SetColLabelValue(0, '名称')
-        self.grid_1.SetColSize(0, 300)
-        self.Bind(wx.EVT_LISTBOX, self.ButtonClick, self.list_box_1)
+ 
+#listctrl
+        il = wx.ImageList(16,16, True)
+        for name in glob.glob("smicon??.png"):
+            bmp = wx.Bitmap(name, wx.BITMAP_TYPE_PNG)
+            il_max = il.Add(bmp)
+        self.list = wx.ListCtrl(self, -1, style=wx.LC_REPORT)
+        self.list.AssignImageList(il, wx.IMAGE_LIST_SMALL)
 
+        # Add some columns
+        for col, text in enumerate(data.columns):
+            self.list.InsertColumn(col, text)
 
+        # add the rows
+        for item in data.rows:
+            index = self.list.InsertStringItem(sys.maxint, item[0])
+            for col, text in enumerate(item[1:]):
+                self.list.SetStringItem(index, col+1, text)
+
+            # give each item a random image
+            img = random.randint(0, il_max)
+            self.list.SetItemImage(index, img, img)
+                
+        # set the width of the columns in various ways
+        self.list.SetColumnWidth(0, 120)
+        self.list.SetColumnWidth(1, 200)#wx.LIST_AUTOSIZE)
+#end listctrl
 
         self.__set_properties()
         self.__do_layout()
@@ -53,6 +78,8 @@ class MyFrame(wx.Frame):
         self.Bind(wx.EVT_BUTTON, self.search, self.button_1)
         self.Bind(wx.EVT_BUTTON, self.find, self.button_2)
         self.Bind(wx.EVT_CONTEXT_MENU, self.ListRightButton, self.list_box_1)
+        self.Bind(wx.EVT_LISTBOX, self.ButtonClick, self.list_box_1)
+        self.list.Bind(wx.EVT_CONTEXT_MENU, self.OnContextMenu)
         # end wxGlade
 
     def __set_properties(self):
@@ -60,7 +87,6 @@ class MyFrame(wx.Frame):
         self.SetTitle("Python E-book Manage System")
         self.SetSize((900, 650))
         self.frame_1_toolbar.Realize()
-        self.grid_1.CreateGrid(10, 3)
         # end wxGlade
 
     def __do_layout(self):
@@ -81,7 +107,7 @@ class MyFrame(wx.Frame):
         sizer_5.Add(self.button_2, 2, wx.EXPAND, 0)
         sizer_2.Add(sizer_5, 1, wx.EXPAND, 5)
         sizer_3.Add(self.list_box_1, 1, wx.EXPAND, 0)
-        sizer_3.Add(self.grid_1, 4, wx.EXPAND, 0)
+        sizer_3.Add(self.list, 4, wx.EXPAND, 0)
         sizer_2.Add(sizer_3, 20, wx.EXPAND, 0)
         sizer_1.Add(sizer_2, 1, wx.EXPAND, 0)
         self.SetSizer(sizer_1)
@@ -90,20 +116,107 @@ class MyFrame(wx.Frame):
 
 
     def ButtonClick(self, event):
-        self.grid_1.Destroy()
-        self.grid_1 = wx.grid.Grid(self, -1, size=(1, 1))
-        self.__do_layout()
         n=self.list_box_1.GetSelection()
         sampleList = [item for item in os.listdir(os.getcwd()) if os.path.splitext(item)[1] in ('.list',)]
         f = open(sampleList[n],'r')
-        bo=[os.path.splitext(os.path.basename(line))[0] for line in f]
+        data.rows=[(os.path.splitext(os.path.basename(line))[0],line)for line in f]
         f.close()
-        self.grid_1.CreateGrid(len(bo),1)
-        self.grid_1.SetColLabelValue(0, '名称')
-        self.grid_1.SetColSize(0, 300)
-        for row in range(len(bo)):
-            for col in range(1):
-                self.grid_1.SetCellValue(row, col,"%s" % bo[row])
+#listctrl
+        self.list.Destroy()#销毁之前的窗口
+        il = wx.ImageList(16,16, True)#随机显示图片
+        for name in glob.glob("smicon??.png"):
+            bmp = wx.Bitmap(name, wx.BITMAP_TYPE_PNG)
+            il_max = il.Add(bmp)
+        self.list = wx.ListCtrl(self, -1, style=wx.LC_REPORT)#建立右边窗体
+        self.list.AssignImageList(il, wx.IMAGE_LIST_SMALL)#定义窗体显示类型
+        self.__do_layout()#重新加载窗体布局
+        # Add some columns
+        for col, text in enumerate(data.columns):
+            self.list.InsertColumn(col, text)
+
+        # add the rows
+        for item in data.rows:
+            index = self.list.InsertStringItem(sys.maxint, item[0])
+            for col, text in enumerate(item[1:]):
+                self.list.SetStringItem(index, col+1, text)
+            # give each item a random image
+            img = random.randint(0, il_max)
+            self.list.SetItemImage(index, img, img)
+                
+        # set the width of the columns in various ways
+        self.list.SetColumnWidth(0, 120)
+        self.list.SetColumnWidth(1, wx.LIST_AUTOSIZE)
+#        self.list.SetColumnWidth(2, wx.LIST_AUTOSIZE)
+#        self.list.SetColumnWidth(3, wx.LIST_AUTOSIZE_USEHEADER)
+        self.list.Bind(wx.EVT_CONTEXT_MENU, self.OnContextMenu)
+#-------------------------------------------------------------------------------------------------------------
+
+#右键菜单
+
+    def OnContextMenu(self, event):
+#        if not hasattr(self, "popupStop"):
+#            self.popupStop = wx.NewId()
+#            self.popupPropery = wx.NewId()
+#            self.Bind(wx.EVT_MENU, self.OnPopupStop, id = self.popupStop)
+#            self.Bind(wx.EVT_MENU, self.OnPopupProperty, id = self.popupPropery)
+        #定义id
+        self.openitem = wx.NewId()
+        self.detail = wx.NewId()
+        self.moveitem = wx.NewId()
+        self.addtogroup = wx.NewId()
+        self.deleteitem=wx.NewId()
+        # 创建菜单
+        menu = wx.Menu()
+        itemopenitem  = wx.MenuItem(menu, self.openitem, "打开文件")
+        menu.AppendItem(itemopenitem)
+        itemdetail  = wx.MenuItem(menu, self.detail, "详细信息")
+        menu.AppendItem(itemdetail)
+        itemmoveitem = wx.MenuItem(menu, self.moveitem, '移动')
+        menu.AppendItem(itemmoveitem)
+#        itemaddtogroup=wx.MenuItem(menu, self.addtogroup, '增加到组')
+#        menu.AppendItem(itemaddtogroup)##--------------------------------此处添加级联菜单--所有组列表－－新建
+	#创建扩展菜单
+        imp = wx.Menu()
+        dirbookList = [item for item in os.listdir(os.getcwd()) if os.path.splitext(item)[1] in ('.list',)]
+        for i,item in enumerate(dirbookList):#将当前目录下的list文件加到扩展目录
+            name='booklist'+'%d', i
+            self.name=wx.NewId()#扩展菜单id
+            name  = wx.MenuItem(imp, self.name, item)#扩展菜单项目
+            imp.AppendItem(name)#增加扩展菜单
+#        	imp.Append(-1, item)  
+#        imp.Append(-1, "Import newsfeed list...")  
+#        imp.Append(-1, "Import bookmarks...")  
+#        imp.Append(-1, "Import mail...")
+# #把这个菜单作为file的子菜单添加进来 用 AppenMenu() 方法  
+        menu.AppendMenu(-1, "&增加到组", imp)  
+   
+        itemdeleteitem=wx.MenuItem(menu, self.deleteitem, '删除此项')
+        menu.AppendItem(itemdeleteitem)##--------------------------------此处添加级联菜单－－从硬盘删除－－从列表删除
+		
+		
+#        itemProperty.Enable(False)#默认让属性按钮变成无效状态
+        itemid = self.list.GetFirstSelected()
+#		while itemid != -1:
+#        #Do something
+#        	itemid = self.list.GetNextSelected(itemid)
+        if itemid == -1:#如果没有选中任何项
+            itemdetail.Enable(False)
+        else:
+            itemdetail.Enable(True)
+            itemmoveitem.Enable(True)
+ #       print itemid
+        #到这里才弹出菜单
+        self.Bind(wx.EVT_MENU, self.Detail, itemdetail)################怎样绑定？？？？？
+#-------------啥怎么样bind？如果list.list中有内容，上面就有问题。你test下。
+        self.PopupMenu(menu)
+
+        #最后注意销毁前面创建的菜单
+        menu.Destroy()
+
+    def Detail(self,event):
+		print self.OnContextMenu.itemid
+		print just_for_test
+#-------------------------------------------------------------------------------------------------------------
 
 
     def ListRightButton(self, event):
@@ -112,7 +225,6 @@ class MyFrame(wx.Frame):
         menu.AppendItem(AddGroup)
         DelGroup = wx.MenuItem(menu, wx.NewId(),"删除一个组")
         menu.AppendItem(DelGroup)
-
         self.Bind(wx.EVT_MENU, self.Add, AddGroup)
         self.Bind(wx.EVT_MENU, self.Del, DelGroup)
         self.PopupMenu(menu)
@@ -121,10 +233,12 @@ class MyFrame(wx.Frame):
         dlg = MyDialog()
         dlg.Bind(wx.EVT_BUTTON, dlg.add, dlg.okay)
         dlg.ShowModal()
+        event.Skip()
     def Del(self, event):
         dlg = MyDialog()
         dlg.Bind(wx.EVT_BUTTON, dlg.delete, dlg.okay)
         dlg.ShowModal()
+        event.Skip()
 
 
     def search(self, event): # wxGlade: MyFrame.<event_handler>
@@ -141,9 +255,7 @@ class MyFrame(wx.Frame):
             wx.MessageBox("请输入想要搜索的格式")
 
         if path != '' and format != '':
- #          fp = open("list.list",'w')
             search.searcher(path, format)
-  #          fp.close()
         event.Skip()
 
     def find(self, event): # wxGlade: MyFrame.<event_handler>
@@ -157,18 +269,40 @@ class MyFrame(wx.Frame):
                 bo.append(line)
         if count==0:
              bo.append('Sorry,the book does not exist!')
-        fp.close()
-        self.grid_1.Destroy()
-        self.grid_1 = wx.grid.Grid(self, -1, size=(1, 1))
-        self.__do_layout()
-        self.grid_1.CreateGrid(len(bo),1)
-        self.grid_1.SetColLabelValue(0, '名称')
-        self.grid_1.SetColSize(0, 500)
-        for row in range(len(bo)):
-            for col in range(1):
-                self.grid_1.SetCellValue(row, col,"%s" % bo[row])
-        event.Skip()
+        fp.close() 
+        data.rows=[(os.path.splitext(os.path.basename(line))[0],line)for line in bo]
 
+#--------------------------------------------------------------------------------------------------------------
+#listctrl
+        self.list.Destroy()
+        il = wx.ImageList(16,16, True)
+        for name in glob.glob("smicon??.png"):
+            bmp = wx.Bitmap(name, wx.BITMAP_TYPE_PNG)
+            il_max = il.Add(bmp)
+        self.list = wx.ListCtrl(self, -1, style=wx.LC_REPORT)
+        self.list.AssignImageList(il, wx.IMAGE_LIST_SMALL)
+        self.__do_layout()
+        # Add some columns
+        for col, text in enumerate(data.columns):
+            self.list.InsertColumn(col, text)
+
+        # add the rows
+        for item in data.rows:
+            index = self.list.InsertStringItem(sys.maxint, item[0])
+            for col, text in enumerate(item[1:]):
+                self.list.SetStringItem(index, col+1, text)
+
+            # give each item a random image
+            img = random.randint(0, il_max)
+            self.list.SetItemImage(index, img, img)
+                
+        # set the width of the columns in various ways
+        self.list.SetColumnWidth(0, 120)
+        self.list.SetColumnWidth(1, wx.LIST_AUTOSIZE)
+#        self.list.SetColumnWidth(2, wx.LIST_AUTOSIZE)
+#        self.list.SetColumnWidth(3, wx.LIST_AUTOSIZE_USEHEADER)
+        self.list.Bind(wx.EVT_CONTEXT_MENU, self.OnContextMenu)
+#-------------------------------
 
 
     def move(self, event): # wxGlade: MyFrame.<event_handler>
