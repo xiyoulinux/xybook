@@ -246,13 +246,10 @@ class MyFrame(wx.Frame):
 
 #        print path
 #        print format
-        if path == '' and format == '':
-            wx.MessageBox("请输入路径和想要搜索的格式")
-        elif  path == '':
+        if path == '' :
             wx.MessageBox("请输入路径")
-        elif format == '':
-            wx.MessageBox("请输入想要搜索的格式")
-
+        if format == '':
+        	format = "pdf chm doc odt"
         if path != '' and format != '':
             trueformat=[]
             for item in format.split(' '):
