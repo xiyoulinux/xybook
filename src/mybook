@@ -263,8 +263,8 @@ class MyFrame(wx.Frame):
         fp = open("list.list", 'r')
         bo=[]
         count=0
-        for line in fp:
-            if key in line:
+        for line in fp.readlines():
+            if key in line.decode("utf-8"):
                 count+=1
                 bo.append(line)
         if count==0:
@@ -298,7 +298,7 @@ class MyFrame(wx.Frame):
                 
         # set the width of the columns in various ways
         self.list.SetColumnWidth(0, 120)
-        self.list.SetColumnWidth(1, wx.LIST_AUTOSIZE)
+        self.list.SetColumnWidth(1, wx.LIST_AUTOSIZE_USEHEADER|wx.LIST_AUTOSIZE)
 #        self.list.SetColumnWidth(2, wx.LIST_AUTOSIZE)
 #        self.list.SetColumnWidth(3, wx.LIST_AUTOSIZE_USEHEADER)
         self.list.Bind(wx.EVT_CONTEXT_MENU, self.OnContextMenu)
