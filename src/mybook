@@ -207,7 +207,6 @@ class MyFrame(wx.Frame):
  #       print itemid
         #到这里才弹出菜单
         self.Bind(wx.EVT_MENU, self.Detail, itemdetail)################怎样绑定？？？？？
-#-------------啥怎么样bind？如果list.list中有内容，上面就有问题。你test下。
         self.PopupMenu(menu)
 
         #最后注意销毁前面创建的菜单
@@ -245,8 +244,8 @@ class MyFrame(wx.Frame):
         path = self.text_ctrl_1.GetValue()
         format = self.text_ctrl_2.GetValue()
 
-        print path
-        print format
+#        print path
+#        print format
         if path == '' and format == '':
             wx.MessageBox("请输入路径和想要搜索的格式")
         elif  path == '':
@@ -255,7 +254,11 @@ class MyFrame(wx.Frame):
             wx.MessageBox("请输入想要搜索的格式")
 
         if path != '' and format != '':
-            search.searcher(path, format)
+            trueformat=[]
+            for item in format.split(' '):
+                if item != '':
+                    trueformat.append('.'+item)
+            search.searcher(path, trueformat)
         event.Skip()
 
     def find(self, event): # wxGlade: MyFrame.<event_handler>

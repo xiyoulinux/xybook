@@ -1,34 +1,32 @@
 #-*- coding: utf-8 -*-
 
 import os,sys
-import string
 
 
 
 def visitfile(fname,format):
-	#print os.path.splitext(fname)[1].translate(unknow, '.') 
-	unknow = string.maketrans('','')
-	loop = '.'
-	if os.path.splitext(fname)[1].translate(unknow,loop) in format :
+	if os.path.splitext(fname)[1] in format:
+		fp = open("list.list",'a')
 		print >> fp,fname
-		
+		fp.close()
 
 def visitor(arg,dirname,fname):
 	for name in fname:
 		fpath = os.path.join(dirname,name)
 		if not os.path.isdir(fpath):
 			visitfile(fpath,arg)
-			
+#			if format in os.path.splitext(fname)[1]:
+#				print >> fp,fname
 
 
 def searcher(path, format):
-	fp = open("list.list",'w')
-	os.path.walk(path,visitor,format)
-	fp.close()
 	
+	os.path.walk(path,visitor,format)
+
 
 
 if __name__ == '__main__' :
-	fp = open("list.list",'w')
+	fp = file("list.list",'w')
 	searcher(path)
 	fp.close()
+
