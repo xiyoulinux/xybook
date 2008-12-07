@@ -126,14 +126,14 @@ class MyFrame(wx.Frame):
         f.close()
 #--------------------------------------------------------------------------------------------------------------
 #listctrl
-        self.list.Destroy()
-        il = wx.ImageList(16,16, True)
+        self.list.Destroy()#销毁之前的窗口
+        il = wx.ImageList(16,16, True)#随机显示图片
         for name in glob.glob("smicon??.png"):
             bmp = wx.Bitmap(name, wx.BITMAP_TYPE_PNG)
             il_max = il.Add(bmp)
-        self.list = wx.ListCtrl(self, -1, style=wx.LC_REPORT)
-        self.list.AssignImageList(il, wx.IMAGE_LIST_SMALL)
-        self.__do_layout()
+        self.list = wx.ListCtrl(self, -1, style=wx.LC_REPORT)#建立右边窗体
+        self.list.AssignImageList(il, wx.IMAGE_LIST_SMALL)#定义窗体显示类型
+        self.__do_layout()#重新加载窗体布局
         # Add some columns
         for col, text in enumerate(data.columns):
             self.list.InsertColumn(col, text)
@@ -164,36 +164,61 @@ class MyFrame(wx.Frame):
 #            self.popupPropery = wx.NewId()
 #            self.Bind(wx.EVT_MENU, self.OnPopupStop, id = self.popupStop)
 #            self.Bind(wx.EVT_MENU, self.OnPopupProperty, id = self.popupPropery)
-        self.popupStop = wx.NewId()
-        self.popupPropery = wx.NewId()
+        #定义id
+        self.openitem = wx.NewId()
+        self.detail = wx.NewId()
+        self.moveitem = wx.NewId()
+        self.addtogroup = wx.NewId()
+        self.deleteitem=wx.NewId()
         # 创建菜单
         menu = wx.Menu()
-        itemStop = wx.MenuItem(menu, self.popupStop, "Stop")
-        itemProperty = wx.MenuItem(menu, self.popupPropery, 'Property')
-        
-        menu.AppendItem(itemStop)
-        menu.AppendItem(itemProperty)
-
-        itemProperty.Enable(False)#默认让属性按钮变成无效状态
+        itemopenitem  = wx.MenuItem(menu, self.openitem, "打开文件")
+        menu.AppendItem(itemopenitem)
+        itemdetail  = wx.MenuItem(menu, self.detail, "详细信息")
+        menu.AppendItem(itemdetail)
+        itemmoveitem = wx.MenuItem(menu, self.moveitem, '移动')
+        menu.AppendItem(itemmoveitem)
+#        itemaddtogroup=wx.MenuItem(menu, self.addtogroup, '增加到组')
+#        menu.AppendItem(itemaddtogroup)##--------------------------------此处添加级联菜单--所有组列表－－新建
+	#创建扩展菜单
+        imp = wx.Menu()
+        dirbookList = [item for item in os.listdir(os.getcwd()) if os.path.splitext(item)[1] in ('.list',)]
+        for i,item in enumerate(dirbookList):#将当前目录下的list文件加到扩展目录
+            name='booklist'+'%d', i
+            self.name=wx.NewId()#扩展菜单id
+            name  = wx.MenuItem(imp, self.name, item)#扩展菜单项目
+            imp.AppendItem(name)#增加扩展菜单
+#        	imp.Append(-1, item)  
+#        imp.Append(-1, "Import newsfeed list...")  
+#        imp.Append(-1, "Import bookmarks...")  
+#        imp.Append(-1, "Import mail...")
+# #把这个菜单作为file的子菜单添加进来 用 AppenMenu() 方法  
+        menu.AppendMenu(-1, "&增加到组", imp)  
+   
+        itemdeleteitem=wx.MenuItem(menu, self.deleteitem, '删除此项')
+        menu.AppendItem(itemdeleteitem)##--------------------------------此处添加级联菜单－－从硬盘删除－－从列表删除
+		
+		
+#        itemProperty.Enable(False)#默认让属性按钮变成无效状态
         itemid = self.list.GetFirstSelected()
 #		while itemid != -1:
 #        #Do something
 #        	itemid = self.list.GetNextSelected(itemid)
         if itemid == -1:#如果没有选中任何项
-            itemStop.Enable(False)
+            itemdetail.Enable(False)
         else:
-            itemStop.Enable(False)
-            itemProperty.Enable(True)
-        print itemid
+            itemdetail.Enable(True)
+            itemmoveitem.Enable(True)
+ #       print itemid
         #到这里才弹出菜单
-#        self.Bind(wx.EVT_MENU, self.Property(), itemProperty)################怎样绑定？？？？？
+        self.Bind(wx.EVT_MENU, self.Detail, itemdetail)################怎样绑定？？？？？
         self.PopupMenu(menu)
 
         #最后注意销毁前面创建的菜单
         menu.Destroy()
 
-    def Property(self,event,itemid):
-		print itemid
+    def Detail(self,event):
+		print self.OnContextMenu.itemid
 #-------------------------------------------------------------------------------------------------------------
 
 
