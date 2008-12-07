@@ -64,7 +64,7 @@ class MyFrame(wx.Frame):
             # give each item a random image
             img = random.randint(0, il_max)
             self.list.SetItemImage(index, img, img)
-                
+
         # set the width of the columns in various ways
         self.list.SetColumnWidth(0, 120)
         self.list.SetColumnWidth(1, 200)#wx.LIST_AUTOSIZE)
