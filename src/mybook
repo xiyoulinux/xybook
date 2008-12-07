@@ -45,7 +45,7 @@ class MyFrame(wx.Frame):
  
 #listctrl
         il = wx.ImageList(16,16, True)
-        for name in glob.glob("smicon??.png"):
+        for name in glob.glob("./picture/smicon??.png"):
             bmp = wx.Bitmap(name, wx.BITMAP_TYPE_PNG)
             il_max = il.Add(bmp)
         self.list = wx.ListCtrl(self, -1, style=wx.LC_REPORT)
@@ -124,7 +124,7 @@ class MyFrame(wx.Frame):
 #listctrl
         self.list.Destroy()#销毁之前的窗口
         il = wx.ImageList(16,16, True)#随机显示图片
-        for name in glob.glob("smicon??.png"):
+        for name in glob.glob("./picture/smicon??.png"):
             bmp = wx.Bitmap(name, wx.BITMAP_TYPE_PNG)
             il_max = il.Add(bmp)
         self.list = wx.ListCtrl(self, -1, style=wx.LC_REPORT)#建立右边窗体
@@ -276,7 +276,7 @@ class MyFrame(wx.Frame):
 #listctrl
         self.list.Destroy()
         il = wx.ImageList(16,16, True)
-        for name in glob.glob("smicon??.png"):
+        for name in glob.glob("./picture/smicon??.png"):
             bmp = wx.Bitmap(name, wx.BITMAP_TYPE_PNG)
             il_max = il.Add(bmp)
         self.list = wx.ListCtrl(self, -1, style=wx.LC_REPORT)
