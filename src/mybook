@@ -11,7 +11,7 @@ from os.path import join
 import sys, glob, random
 import data
 import shutil
-
+import time
 # begin wxGlade: extracode
 # end wxGlade
 
@@ -208,8 +208,10 @@ class MyFrame(wx.Frame):
         menu.Destroy()
 
     def Detail(self,event):
-        print self.itemid
-        print "just_for_test"
+#        wx.MessageBox("请输入路径")
+#        print  data.rows[self.itemid][2]
+        st = os.stat(data.rows[self.itemid][2])
+        wx.MessageBox("路径:%s\n大小:%dbytes\n属主:%s  %s\n创建时间:%s\n最后访问:%s\n最后修改:%s"% (data.rows[self.itemid][2],st.st_size,st.st_uid,st.st_gid,time.ctime(st.st_ctime),time.ctime(st.st_atime),time.ctime(st.st_mtime)))
     def Open(self,filepath):
 	    open=eio.filepath#哥儿几个，帮忙看一下,哪儿格式不对 ^ v ^
 	    os.system(open)
