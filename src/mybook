@@ -61,9 +61,9 @@ class MyFrame(wx.Frame):
             self.RightCtrl.SetItemImage(index, img, img)
         # set the width of the columns in various ways
         self.RightCtrl.SetColumnWidth(0, 200)
-        self.RightCtrl.SetColumnWidth(1, 50)#wx.LIST_AUTOSIZE)
-        self.RightCtrl.SetColumnWidth(2, 50)
-        self.RightCtrl.SetColumnWidth(3, 400)
+        self.RightCtrl.SetColumnWidth(1, 100)#wx.LIST_AUTOSIZE)
+        self.RightCtrl.SetColumnWidth(2, wx.LIST_AUTOSIZE)
+#        self.RightCtrl.SetColumnWidth(3, 400)
 #end listctrl
 
         self.__set_properties()
@@ -114,7 +114,9 @@ class MyFrame(wx.Frame):
         n=self.vLeftListBox.GetSelection()
         sampleList = [item for item in os.listdir(os.getcwd()) if os.path.splitext(item)[1] in ('.list',)]
         f = open(sampleList[n],'r')
-        data.rows=[(os.path.splitext(os.path.basename(line))[0],'','',line)for line in f]
+ #       data.rows=[(os.path.splitext(os.path.basename(line))[0],'','',line)for line in f]
+        data.rows=[(os.path.splitext(os.path.basename(line.split('        ')[0]))[0], line.split('        ')[-1],line.split('        ')[0])for line in f]
+
         f.close()
           #listctrl
         self.RightCtrl.Destroy()#销毁之前的窗口
@@ -138,9 +140,9 @@ class MyFrame(wx.Frame):
             self.RightCtrl.SetItemImage(index, img, img)                
         # set the width of the columns in various ways
         self.RightCtrl.SetColumnWidth(0, 200)
-        self.RightCtrl.SetColumnWidth(1, 50)#wx.LIST_AUTOSIZE)
-        self.RightCtrl.SetColumnWidth(2, 50)
-        self.RightCtrl.SetColumnWidth(3, 400)
+        self.RightCtrl.SetColumnWidth(1, 100)#wx.LIST_AUTOSIZE)
+        self.RightCtrl.SetColumnWidth(2, wx.LIST_AUTOSIZE)
+      #  self.RightCtrl.SetColumnWidth(3, 400)
         self.RightCtrl.Bind(wx.EVT_CONTEXT_MENU, self.OnContextMenu)
      #右键菜单
     def OnContextMenu(self, event):
@@ -249,7 +251,8 @@ class MyFrame(wx.Frame):
     def visitfile(self,fname,format):
         if os.path.splitext(fname)[1] in format:
             #fp = open("list.list",'a')
-            print >> self.fp,fname
+            print >> self.fp,fname+'          '+str(os.lstat(fname)[6])
+#self.fp,fname#,os.stat(fname)[6]#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
             #fp.close()
 
     def visitor(self,arg,dirname,fname):
@@ -273,9 +276,10 @@ class MyFrame(wx.Frame):
                 count+=1
                 bo.append(line)
         if count==0:
-             bo.append('Sorry,the book does not exist!')
+             bo.append('对不起，您搜索的电子书不在列表中！！                            ')
         fp.close() 
-        data.rows=[(os.path.splitext(os.path.basename(line))[0],'','',line)for line in bo]
+        data.rows=[(os.path.splitext(os.path.basename(line.split('        ')[0]))[0], line.split('        ')[-1],line.split('        ')[0])for line in bo]
+#        data.rows=[(os.path.splitext(os.path.basename(line))[0],'','',line)for line in bo]
 
 #--------------------------------------------------------------------------------------------------------------
 #listctrl
@@ -303,9 +307,9 @@ class MyFrame(wx.Frame):
                 
         # set the width of the columns in various ways
         self.RightCtrl.SetColumnWidth(0, 200)
-        self.RightCtrl.SetColumnWidth(1, 50)#wx.LIST_AUTOSIZE)
-        self.RightCtrl.SetColumnWidth(2, 50)
-        self.RightCtrl.SetColumnWidth(3, 400)
+        self.RightCtrl.SetColumnWidth(1, 100)#wx.LIST_AUTOSIZE)
+        self.RightCtrl.SetColumnWidth(2, wx.LIST_AUTOSIZE)
+       # self.RightCtrl.SetColumnWidth(3, 400)
         self.RightCtrl.Bind(wx.EVT_CONTEXT_MENU, self.OnContextMenu)
 #-------------------------------
 
