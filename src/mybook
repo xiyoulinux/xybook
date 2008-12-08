@@ -6,6 +6,7 @@ import wx
 import wx.grid
 import os
 import os.path
+from os.path import join
 #import search
 import sys, glob, random
 import data
@@ -80,7 +81,7 @@ class MyFrame(wx.Frame):
 
     def __set_properties(self):
         # begin wxGlade: MyFrame.__set_properties
-        self.SetTitle("Python E-book Manage System")
+        self.SetTitle("Python e-book Management System")
         self.SetSize((900, 650))
         self.vToolbar.Realize()
         # end wxGlade
@@ -161,10 +162,12 @@ class MyFrame(wx.Frame):
         menu = wx.Menu()
         itemopenitem  = wx.MenuItem(menu, self.openitem, "打开文件")
         menu.AppendItem(itemopenitem)
+	self.Bind(wx.EVT_MENU, self.Open,itemopenitem)
         itemdetail  = wx.MenuItem(menu, self.detail, "详细信息")
         menu.AppendItem(itemdetail)
         itemmoveitem = wx.MenuItem(menu, self.moveitem, '移动')
         menu.AppendItem(itemmoveitem)
+        self.Bind(wx.EVT_MENU, self.Move, itemmoveitem)
 #        itemaddtogroup=wx.MenuItem(menu, self.addtogroup, '增加到组')
 #        menu.AppendItem(itemaddtogroup)##--------------------------------此处添加级联菜单--所有组列表－－新建
         #创建扩展菜单
@@ -207,6 +210,18 @@ class MyFrame(wx.Frame):
     def Detail(self,event):
         print self.itemid
         print "just_for_test"
+    def Open(self,filepath):
+	    open=eio.filepath#哥儿几个，帮忙看一下,哪儿格式不对 ^ v ^
+	    os.system(open)
+    def Move(self,event):#有点问题，明天请教一下，很快完成
+	    dialog = wx.TextEntryDialog(None,
+			    "请输入目的路径",
+			    "文件移动","",style=wx.OK|wx.CANCEL)
+	    if dialog.ShowModal()==wx.ID_OK:
+		    print "You entered:%s" % dialog.GetValue()
+	    #	    cmd=' '.join(['mv',fname,dialog.GetVlaue()])
+            #		    os.system(cmd)
+ 
 #-------------------------------------------------------------------------------------------------------------
 
 
