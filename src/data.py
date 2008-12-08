@@ -3,5 +3,5 @@
 import os
 columns = ["BookName","Size","CreateDate","BookDir"]
 f = open('list.list','r')
-rows=[(os.path.splitext(os.path.basename(line))[0],line)for line in f]
+rows=[(os.path.splitext(os.path.basename(line))[0],'','',line)for line in f]
 f.close()

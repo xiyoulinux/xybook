@@ -1,14 +1,14 @@
 #-*- coding: utf-8 -*-
 
 import os,sys
-
+import mybook
 
 
 def visitfile(fname,format):
 	if os.path.splitext(fname)[1] in format:
-		fp = open("list.list",'a')
-		print >> fp,fname
-		fp.close()
+		#fp = open("list.list",'a')
+		print >> mybook.MyFrame.search.fp,fname
+		#fp.close()
 
 def visitor(arg,dirname,fname):
 	for name in fname:

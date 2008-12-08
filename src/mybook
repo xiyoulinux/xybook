@@ -6,7 +6,7 @@ import wx
 import wx.grid
 import os
 import os.path
-import search
+#import search
 import sys, glob, random
 import data
 import shutil
@@ -19,7 +19,7 @@ class MyFrame(wx.Frame):
     def __init__(self, *args, **kwds):
         # begin wxGlade: MyFrame.__init__
         kwds["style"] = wx.DEFAULT_FRAME_STYLE
-		   #启动画面splash
+           #启动画面splash
         RunPicture = wx.Image("./picture/run.png").ConvertToBitmap()
         wx.SplashScreen(RunPicture, wx.SPLASH_CENTRE_ON_SCREEN | wx.SPLASH_TIMEOUT,1000, None, -1)
         wx.Yield()
@@ -41,7 +41,7 @@ class MyFrame(wx.Frame):
         self.vBeginFind = wx.Button(self, -1, u"搜索关键字")
         self.vLeftListBox = wx.ListBox(self, -1, choices=[item for item in os.listdir(os.getcwd()) if os.path.splitext(item)[1] in ('.list',)])
  
-		  #listctrl
+          #listctrl
         il = wx.ImageList(16,16, True)
         for name in glob.glob("./picture/smicon??.png"):
             RunPicture = wx.Bitmap(name, wx.BITMAP_TYPE_PNG)
@@ -56,12 +56,14 @@ class MyFrame(wx.Frame):
             index = self.RightCtrl.InsertStringItem(sys.maxint, item[0])
             for col, text in enumerate(item[1:]):
                 self.RightCtrl.SetStringItem(index, col+1, text)
-		# give each item a random image
+        # give each item a random image
             img = random.randint(0, il_max)
             self.RightCtrl.SetItemImage(index, img, img)
         # set the width of the columns in various ways
-        self.RightCtrl.SetColumnWidth(0, 120)
-        self.RightCtrl.SetColumnWidth(1, 200)#wx.LIST_AUTOSIZE)
+        self.RightCtrl.SetColumnWidth(0, 200)
+        self.RightCtrl.SetColumnWidth(1, 50)#wx.LIST_AUTOSIZE)
+        self.RightCtrl.SetColumnWidth(2, 50)
+        self.RightCtrl.SetColumnWidth(3, 400)
 #end listctrl
 
         self.__set_properties()
@@ -112,9 +114,9 @@ class MyFrame(wx.Frame):
         n=self.vLeftListBox.GetSelection()
         sampleList = [item for item in os.listdir(os.getcwd()) if os.path.splitext(item)[1] in ('.list',)]
         f = open(sampleList[n],'r')
-        data.rows=[(os.path.splitext(os.path.basename(line))[0],line)for line in f]
+        data.rows=[(os.path.splitext(os.path.basename(line))[0],'','',line)for line in f]
         f.close()
-		  #listctrl
+          #listctrl
         self.RightCtrl.Destroy()#销毁之前的窗口
         il = wx.ImageList(16,16, True)#随机显示图片
         for name in glob.glob("./picture/smicon??.png"):
@@ -131,14 +133,14 @@ class MyFrame(wx.Frame):
             index = self.RightCtrl.InsertStringItem(sys.maxint, item[0])
             for col, text in enumerate(item[1:]):
                 self.RightCtrl.SetStringItem(index, col+1, text)
-		# give each item a random image
+        # give each item a random image
             img = random.randint(0, il_max)
             self.RightCtrl.SetItemImage(index, img, img)                
         # set the width of the columns in various ways
-        self.RightCtrl.SetColumnWidth(0, 80)
-        self.RightCtrl.SetColumnWidth(1, wx.LIST_AUTOSIZE|wx.LIST_AUTOSIZE_USEHEADER)
-        self.RightCtrl.SetColumnWidth(2, wx.LIST_AUTOSIZE|wx.LIST_AUTOSIZE_USEHEADER)
-        self.RightCtrl.SetColumnWidth(3, wx.LIST_AUTOSIZE|wx.LIST_AUTOSIZE_USEHEADER)
+        self.RightCtrl.SetColumnWidth(0, 200)
+        self.RightCtrl.SetColumnWidth(1, 50)#wx.LIST_AUTOSIZE)
+        self.RightCtrl.SetColumnWidth(2, 50)
+        self.RightCtrl.SetColumnWidth(3, 400)
         self.RightCtrl.Bind(wx.EVT_CONTEXT_MENU, self.OnContextMenu)
      #右键菜单
     def OnContextMenu(self, event):
@@ -163,7 +165,7 @@ class MyFrame(wx.Frame):
         menu.AppendItem(itemmoveitem)
 #        itemaddtogroup=wx.MenuItem(menu, self.addtogroup, '增加到组')
 #        menu.AppendItem(itemaddtogroup)##--------------------------------此处添加级联菜单--所有组列表－－新建
-		#创建扩展菜单
+        #创建扩展菜单
         imp = wx.Menu()
         dirbookList = [item for item in os.listdir(os.getcwd()) if os.path.splitext(item)[1] in ('.list',)]
         for i,item in enumerate(dirbookList):#将当前目录下的list文件加到扩展目录
@@ -171,7 +173,7 @@ class MyFrame(wx.Frame):
             self.name=wx.NewId()#扩展菜单id
             name  = wx.MenuItem(imp, self.name, item)#扩展菜单项目
             imp.AppendItem(name)#增加扩展菜单
-#        	imp.Append(-1, item)  
+#           imp.Append(-1, item)  
 #        imp.Append(-1, "Import newsfeed list...")  
 #        imp.Append(-1, "Import bookmarks...")  
 #        imp.Append(-1, "Import mail...")
@@ -180,19 +182,19 @@ class MyFrame(wx.Frame):
    
         itemdeleteitem=wx.MenuItem(menu, self.deleteitem, '删除此项')
         menu.AppendItem(itemdeleteitem)##--------------------------------此处添加级联菜单－－从硬盘删除－－从列表删除
-		
-		
+        
+        
 #        itemProperty.Enable(False)#默认让属性按钮变成无效状态
-        itemid = self.RightCtrl.GetFirstSelected()
-#		while itemid != -1:
+        self.itemid = self.RightCtrl.GetFirstSelected()
+#       while itemid != -1:
 #        #Do something
-#        	itemid = self.RightCtrl.GetNextSelected(itemid)
-        if itemid == -1:#如果没有选中任何项
+#           itemid = self.RightCtrl.GetNextSelected(itemid)
+        if self.itemid == -1:#如果没有选中任何项
             itemdetail.Enable(False)
         else:
             itemdetail.Enable(True)
             itemmoveitem.Enable(True)
- #       print itemid
+#        print itemid
         #到这里才弹出菜单
         self.Bind(wx.EVT_MENU, self.Detail, itemdetail)################怎样绑定？？？？？
         self.PopupMenu(menu)
@@ -201,8 +203,8 @@ class MyFrame(wx.Frame):
         menu.Destroy()
 
     def Detail(self,event):
-		print self.OnContextMenu.itemid
-		print just_for_test
+        print self.itemid
+        print "just_for_test"
 #-------------------------------------------------------------------------------------------------------------
 
 
@@ -234,14 +236,32 @@ class MyFrame(wx.Frame):
         if path == '' :
             wx.MessageBox("请输入路径")
         if format == '':
-        	format = "pdf chm doc odt"
+            format = "pdf chm doc odt"
         if path != '' and format != '':
-            trueformat=[]
+            trueformat=[]               
             for item in format.split(' '):
                 if item != '':
-                    trueformat.append('.'+item)
-            search.searcher(path.encode("utf-8"), trueformat)
+                    trueformat.append('.'+item)     
+        self.fp = open("list.list",'w')   
+        self.searcher(path.encode("utf-8"), trueformat)
+        self.fp.close()
         event.Skip()
+    def visitfile(self,fname,format):
+        if os.path.splitext(fname)[1] in format:
+            #fp = open("list.list",'a')
+            print >> self.fp,fname
+            #fp.close()
+
+    def visitor(self,arg,dirname,fname):
+        for name in fname:
+            fpath = os.path.join(dirname,name)
+            if not os.path.isdir(fpath):
+                self.visitfile(fpath,arg)
+    #           if format in os.path.splitext(fname)[1]:
+    #               print >> fp,fname
+    def searcher(self,path, format): 
+        os.path.walk(path,self.visitor,format)
+                
 
     def find(self, event): # wxGlade: MyFrame.<event_handler>
         key = self.vInputKey.GetValue()
@@ -255,7 +275,7 @@ class MyFrame(wx.Frame):
         if count==0:
              bo.append('Sorry,the book does not exist!')
         fp.close() 
-        data.rows=[(os.path.splitext(os.path.basename(line))[0],line)for line in bo]
+        data.rows=[(os.path.splitext(os.path.basename(line))[0],'','',line)for line in bo]
 
 #--------------------------------------------------------------------------------------------------------------
 #listctrl
@@ -282,10 +302,10 @@ class MyFrame(wx.Frame):
             self.RightCtrl.SetItemImage(index, img, img)
                 
         # set the width of the columns in various ways
-        self.RightCtrl.SetColumnWidth(0, 120)
-        self.RightCtrl.SetColumnWidth(1, wx.LIST_AUTOSIZE_USEHEADER|wx.LIST_AUTOSIZE)
-#        self.RightCtrl.SetColumnWidth(2, wx.LIST_AUTOSIZE)
-#        self.RightCtrl.SetColumnWidth(3, wx.LIST_AUTOSIZE_USEHEADER)
+        self.RightCtrl.SetColumnWidth(0, 200)
+        self.RightCtrl.SetColumnWidth(1, 50)#wx.LIST_AUTOSIZE)
+        self.RightCtrl.SetColumnWidth(2, 50)
+        self.RightCtrl.SetColumnWidth(3, 400)
         self.RightCtrl.Bind(wx.EVT_CONTEXT_MENU, self.OnContextMenu)
 #-------------------------------
 
@@ -342,16 +362,16 @@ class MyDialog(wx.Dialog):
         self.SetSizer(layout)
         layout.Fit(self)
     def add(self ,event):
-    	newname = self.name.GetValue()+".list"
-    	f=open(newname, "w")
-    	f.close()
+        newname = self.name.GetValue()+".list"
+        f=open(newname, "w")
+        f.close()
         event.Skip()
     def delete(self ,event):
-    	newname = self.name.GetValue()+".list"
-    	os.remove(newname)
+        newname = self.name.GetValue()+".list"
+        os.remove(newname)
         event.Skip()
-   	
-    	
+    
+        
 
 if __name__ == "__main__":
     app = wx.PySimpleApp(0)
