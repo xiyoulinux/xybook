@@ -156,7 +156,7 @@ class MyFrame(wx.Frame):
         self.openitem = wx.NewId()
         self.detail = wx.NewId()
         self.moveitem = wx.NewId()
-        self.addtogroup = wx.NewId()
+  #      self.addtogroup = wx.NewId()
         self.deleteitem=wx.NewId()
            # 创建菜单
         menu = wx.Menu()
@@ -176,8 +176,8 @@ class MyFrame(wx.Frame):
         for i,item in enumerate(dirbookList):#将当前目录下的list文件加到扩展目录
             name='booklist'+'%d', i
             self.name=wx.NewId()#扩展菜单id
-            name  = wx.MenuItem(imp, self.name, item)#扩展菜单项目
-            imp.AppendItem(name)#增加扩展菜单
+            itemname  = wx.MenuItem(imp, self.name, item)#扩展菜单项目
+            imp.AppendItem(itemname)#增加扩展菜单
 #           imp.Append(-1, item)  
 #        imp.Append(-1, "Import newsfeed list...")  
 #        imp.Append(-1, "Import bookmarks...")  
@@ -201,9 +201,10 @@ class MyFrame(wx.Frame):
             itemmoveitem.Enable(True)
 #        print itemid
         #到这里才弹出菜单
-        self.Bind(wx.EVT_MENU, self.Detail, itemdetail)################怎样绑定？？？？？
+        self.Bind(wx.EVT_MENU, self.Detail, itemdetail)
+        self.Bind(wx.EVT_MENU, self.add2group,itemname)
+        self.Bind(wx.EVT_MENU, self.Delete,itemdeleteitem)
         self.PopupMenu(menu)
-
         #最后注意销毁前面创建的菜单
         menu.Destroy()
 
@@ -212,6 +213,18 @@ class MyFrame(wx.Frame):
 #        print  data.rows[self.itemid][2]
         st = os.stat(data.rows[self.itemid][2])
         wx.MessageBox("路径:%s\n大小:%dbytes\n属主:%s  %s\n创建时间:%s\n最后访问:%s\n最后修改:%s"% (data.rows[self.itemid][2],st.st_size,st.st_uid,st.st_gid,time.ctime(st.st_ctime),time.ctime(st.st_atime),time.ctime(st.st_mtime)))
+    def Delete(self,event):
+        if os.path.isfile(data.rows[self.itemid][2][:-1]):
+            os.remove(data.rows[self.itemid][2][:-1])
+            self.RightCtrl.DeleteItem(self.itemid)
+            wx.MessageBox("删除成功")
+        else:
+            wx.MessageBox("文件不存在，请刷新列表")
+            self.RightCtrl.DeleteItem(self.itemid)
+    def add2group(self,event):
+        pass
+
+
     def Open(self,filepath):
 	    open=eio.filepath#哥儿几个，帮忙看一下,哪儿格式不对 ^ v ^
 	    os.system(open)
