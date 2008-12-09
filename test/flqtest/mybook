@@ -7,7 +7,6 @@ import wx.grid
 import os
 import os.path
 from os.path import join
-#import search
 import sys, glob, random
 import data
 import shutil
@@ -171,23 +170,6 @@ class MyFrame(wx.Frame):
         itemaddtolist=wx.MenuItem(menu, self.add2list, '增加到组')
         menu.AppendItem(itemaddtolist)##--------------------------------此处添加级联菜单--所有组列表－－新建
         #创建扩展菜单
-#---------------------------------------------------------------------
-#        imp = wx.Menu()
-#        dirbookList = [item for item in os.listdir(os.getcwd()) if os.path.splitext(item)[1] in ('.list',)]
-#        for i,self.item in enumerate(dirbookList):#将当前目录下的list文件加到扩展目录
-##            name='booklist'+'%d', i
-#            self.name=dirbookList
-#            self.itemname=dirbookList
-#            self.name[i]=wx.NewId()#扩展菜单id
-#            self.itemname[i]  = wx.MenuItem(imp, self.name[i], self.item)#扩展菜单项目
-#            imp.AppendItem(self.itemname[i])#增加扩展菜单
-##           imp.Append(-1, item)  
-##        imp.Append(-1, "Import newsfeed list...")  
-##        imp.Append(-1, "Import bookmarks...")  
-##        imp.Append(-1, "Import mail...")
-# #把这个菜单作为file的子菜单添加进来 用 AppenMenu() 方法  
-#        menu.AppendMenu(-1, "&增加到组", imp)  
-#-------------------------------------------------------------------------------------   
         itemdeleteitem=wx.MenuItem(menu, self.deleteitem, '删除此项')
         menu.AppendItem(itemdeleteitem)##--------------------------------此处添加级联菜单－－从硬盘删除－－从列表删除
         
@@ -216,13 +198,17 @@ class MyFrame(wx.Frame):
         menu.Destroy()
 
     def addtolist(self,event):
-   #     print self.itemname[i]
-        dlg = MyDialog()
-        dlg.about_txt = """输入你要添加到的组的组名"""
-        dlg.Bind(wx.EVT_BUTTON, dlg.addtolist, dlg.okay)
-        dlg.ShowModal()
-#        event.Skip()
-        pass
+        dialog = wx.TextEntryDialog(None,"请输入列表名","增加到列表","",style=wx.OK|wx.CANCEL)
+        if dialog.ShowModal()==wx.ID_OK:
+            name= dialog.GetValue()+".list"
+        if os.path.isfile(name):
+            f=open(name,'a')
+            f.write(data.rows[self.itemid][2])
+            f.close()
+        else:
+            pass
+
+
     def Detail(self,event):
 #        wx.MessageBox("请输入路径")
 #        print  data.rows[self.itemid][2]
@@ -417,14 +403,6 @@ class MyDialog(wx.Dialog):
         newname = self.name.GetValue()+".list"
         os.remove(newname)
         event.Skip()
-    def addtolist(self,event):
-        name=self.name.GetValue()+".list"
-        if os.path.isfile(self.name.GetValue()+".list"):
-            f=open(name,'a')
-            f.write(frame_1.data.rows[frame_1.OnContextMenu.self.itemid][2])
-            f.close()
-        else:
-            pass
         
 
 if __name__ == "__main__":
