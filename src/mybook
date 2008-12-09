@@ -7,7 +7,6 @@ import wx.grid
 import os
 import os.path
 from os.path import join
-#import search
 import sys, glob, random
 import data
 import shutil
@@ -162,8 +161,8 @@ class MyFrame(wx.Frame):
         menu = wx.Menu()
         itemopenitem  = wx.MenuItem(menu, self.openitem, "打开文件")
         menu.AppendItem(itemopenitem)
-	self.Bind(wx.EVT_MENU, self.Open,itemopenitem)
-        itemdetail  = wx.MenuItem(menu, self.detail, "详细信息")
+        self.Bind(wx.EVT_MENU, self.Open,itemopenitem)
+        itemdetail = wx.MenuItem(menu, self.detail, "详细信息")
         menu.AppendItem(itemdetail)
         itemmoveitem = wx.MenuItem(menu, self.moveitem, '移动')
         menu.AppendItem(itemmoveitem)
@@ -226,16 +225,16 @@ class MyFrame(wx.Frame):
 
 
     def Open(self,filepath):
-	    open=eio.filepath#哥儿几个，帮忙看一下,哪儿格式不对 ^ v ^
-	    os.system(open)
+        open=eio.filepath#哥儿几个，帮忙看一下,哪儿格式不对 ^ v ^
+        os.system(open)
     def Move(self,event):#有点问题，明天请教一下，很快完成
-	    dialog = wx.TextEntryDialog(None,
-			    "请输入目的路径",
-			    "文件移动","",style=wx.OK|wx.CANCEL)
-	    if dialog.ShowModal()==wx.ID_OK:
-		    print "You entered:%s" % dialog.GetValue()
-	    #	    cmd=' '.join(['mv',fname,dialog.GetVlaue()])
-            #		    os.system(cmd)
+        dialog = wx.TextEntryDialog(None,
+                "请输入目的路径",
+                    "文件移动","",style=wx.OK|wx.CANCEL)
+        if dialog.ShowModal()==wx.ID_OK:
+            print "You entered:%s" % dialog.GetValue()
+        #       cmd=' '.join(['mv',fname,dialog.GetVlaue()])
+            #           os.system(cmd)
  
 #-------------------------------------------------------------------------------------------------------------
 
@@ -345,7 +344,9 @@ class MyFrame(wx.Frame):
 
 
     def move(self, event): # wxGlade: MyFrame.<event_handler>
-        print "Event handler `move' not implemented"
+        dlg = MoveDialog()
+        #dlg.Bind(wx.EVT_BUTTON, dlg.add, dlg.okay)
+        dlg.ShowModal()
         event.Skip()
 
     def About(self, event): # wxGlade: MyFrame.<event_handler>
@@ -361,6 +362,56 @@ class MyFrame(wx.Frame):
         info.AddDeveloper('XiYouLinux')
         wx.AboutBox(info)
         event.Skip()
+
+class MoveDialog(wx.Dialog):
+    def __init__(self):
+        wx.Dialog.__init__(self, None, -1, "Validators: validating")
+
+        self.vTidyAbout_txt = """Welcome to XiYouLinux"""
+        # Create the text controls
+        self.vTidyAbout = wx.StaticText(self, -1, self.vTidyAbout_txt)
+        self.vSrcPath  = wx.StaticText(self, -1, "列表名称")
+        self.vDstPath  = wx.StaticText(self, -1, "目的路径")
+        self.vSrcInput = wx.TextCtrl(self, -1, "")
+        self.vDstInput = wx.TextCtrl(self, -1, "")
+        # Use standard button IDs
+        self.vOkay = wx.Button(self, wx.ID_OK)
+        self.vOkay.SetDefault()
+        self.vCancel = wx.Button(self, wx.ID_CANCEL)
+        # Layout with sizers
+        layout = wx.BoxSizer(wx.VERTICAL)
+        layout.Add(self.vTidyAbout, 0, wx.ALL, 5)
+        layout.Add(wx.StaticLine(self), 0, wx.EXPAND|wx.ALL, 5)
+
+        fgs = wx.FlexGridSizer(2, 0, 5, 5)
+        fgs.Add(self.vSrcPath, 0, wx.ALIGN_LEFT)
+        fgs.Add(self.vSrcInput, 0, wx.EXPAND|wx.ALL)
+        fgs.Add(self.vDstPath, 1, wx.ALIGN_LEFT)
+        fgs.Add(self.vDstInput, 1, wx.EXPAND|wx.ALL)
+        fgs.AddGrowableCol(1)
+        layout.Add(fgs, 0, wx.EXPAND|wx.ALL, 5)
+
+        btns = wx.StdDialogButtonSizer()
+        btns.AddButton(self.vOkay)
+        btns.AddButton(self.vCancel)
+        btns.Realize()
+        layout.Add(btns, 0, wx.EXPAND|wx.ALL, 5)
+        self.Bind(wx.EVT_BUTTON, self.fTidyRealize,self.vOkay)
+        self.SetSizer(layout)
+        layout.Fit(self)
+
+    def fTidyRealize(self,event):
+        SrcPath = self.vSrcInput.GetValue()
+        DstPath = self.vDstInput.GetValue()
+        
+        fp = open(SrcPath,"r")
+        for line in fp:
+            print line.split('        ')[0]
+            DstPath = DstPath + "/" +os.path.basename((line.split('        ')[0]))
+            print DstPath
+            os.rename(line.split('        ')[0], DstPath)
+        fp.close()
+                
 
 
 # end of class MyFrame
