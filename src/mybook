@@ -400,6 +400,18 @@ class MoveDialog(wx.Dialog):
         self.SetSizer(layout)
         layout.Fit(self)
 
+    def rename(self,old,new):
+        print 'begin to rename',old,new
+        new2=''
+        for i in range(0,len(new)-1,2):
+            a=new[i:i+2]
+            if a!='\xa1@':
+                new2+=a;
+        print 'new name =',new2
+        if new2!=old:
+            os.rename(old,new2)
+            print 'rename',old,'to',new2
+
     def fTidyRealize(self,event):
         SrcPath = self.vSrcInput.GetValue()
         DstPath = self.vDstInput.GetValue()
@@ -409,7 +421,7 @@ class MoveDialog(wx.Dialog):
             print line.split('        ')[0]
             DstPath = DstPath + "/" +os.path.basename((line.split('        ')[0]))
             print DstPath
-            os.rename(line.split('        ')[0], DstPath)
+            self.rename(line.split('        ')[0], DstPath)
         fp.close()
                 
 
