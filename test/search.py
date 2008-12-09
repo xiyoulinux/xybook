@@ -3,11 +3,11 @@
 import os,sys
 
 format = ['.pdf','.chm']
-path = "/root"
+path = "/media/DATA/ebook"
 
 def visitfile(fname):
 	if os.path.splitext(fname)[1] in format:
-		print >> fp,fname
+		print >> fp,fname+'          '+str(os.lstat(fname)[6])
 
 def visitor(arg,dirname,fname):
 	for name in fname:

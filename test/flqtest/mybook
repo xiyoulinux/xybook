@@ -7,6 +7,7 @@ import wx.grid
 import os
 import os.path
 from os.path import join
+#import search
 import sys, glob, random
 import data
 import shutil
@@ -19,7 +20,7 @@ class MyFrame(wx.Frame):
     def __init__(self, *args, **kwds):
         # begin wxGlade: MyFrame.__init__
         kwds["style"] = wx.DEFAULT_FRAME_STYLE
-           #启动画面splash
+        #启动画面splash
         RunPicture = wx.Image("./picture/run.png").ConvertToBitmap()
         wx.SplashScreen(RunPicture, wx.SPLASH_CENTRE_ON_SCREEN | wx.SPLASH_TIMEOUT,1000, None, -1)
         wx.Yield()
@@ -41,7 +42,7 @@ class MyFrame(wx.Frame):
         self.vBeginFind = wx.Button(self, -1, u"搜索关键字")
         self.vLeftListBox = wx.ListBox(self, -1, choices=[item for item in os.listdir(os.getcwd()) if os.path.splitext(item)[1] in ('.list',)])
  
-          #listctrl
+        #listctrl
         il = wx.ImageList(16,16, True)
         for name in glob.glob("./picture/smicon??.png"):
             RunPicture = wx.Bitmap(name, wx.BITMAP_TYPE_PNG)
@@ -63,8 +64,8 @@ class MyFrame(wx.Frame):
         self.RightCtrl.SetColumnWidth(0, 200)
         self.RightCtrl.SetColumnWidth(1, 100)#wx.LIST_AUTOSIZE)
         self.RightCtrl.SetColumnWidth(2, wx.LIST_AUTOSIZE)
-#        self.RightCtrl.SetColumnWidth(3, 400)
-#end listctrl
+        #self.RightCtrl.SetColumnWidth(3, 400)
+        #end listctrl
 
         self.__set_properties()
         self.__do_layout()
@@ -114,11 +115,11 @@ class MyFrame(wx.Frame):
         n=self.vLeftListBox.GetSelection()
         sampleList = [item for item in os.listdir(os.getcwd()) if os.path.splitext(item)[1] in ('.list',)]
         f = open(sampleList[n],'r')
- #       data.rows=[(os.path.splitext(os.path.basename(line))[0],'','',line)for line in f]
+        #data.rows=[(os.path.splitext(os.path.basename(line))[0],'','',line)for line in f]
         data.rows=[(os.path.splitext(os.path.basename(line.split('        ')[0]))[0], line.split('        ')[-1],line.split('        ')[0])for line in f]
 
         f.close()
-          #listctrl
+        #listctrl
         self.RightCtrl.Destroy()#销毁之前的窗口
         il = wx.ImageList(16,16, True)#随机显示图片
         for name in glob.glob("./picture/smicon??.png"):
@@ -142,9 +143,9 @@ class MyFrame(wx.Frame):
         self.RightCtrl.SetColumnWidth(0, 200)
         self.RightCtrl.SetColumnWidth(1, 100)#wx.LIST_AUTOSIZE)
         self.RightCtrl.SetColumnWidth(2, wx.LIST_AUTOSIZE)
-      #  self.RightCtrl.SetColumnWidth(3, 400)
+        #self.RightCtrl.SetColumnWidth(3, 400)
         self.RightCtrl.Bind(wx.EVT_CONTEXT_MENU, self.OnContextMenu)
-     #右键菜单
+        #右键菜单
     def OnContextMenu(self, event):
 #        if not hasattr(self, "popupStop"):
 #            self.popupStop = wx.NewId()
@@ -155,35 +156,38 @@ class MyFrame(wx.Frame):
         self.openitem = wx.NewId()
         self.detail = wx.NewId()
         self.moveitem = wx.NewId()
-  #      self.addtogroup = wx.NewId()
+        self.add2list = wx.NewId()
         self.deleteitem=wx.NewId()
-           # 创建菜单
+        # 创建菜单
         menu = wx.Menu()
         itemopenitem  = wx.MenuItem(menu, self.openitem, "打开文件")
         menu.AppendItem(itemopenitem)
         self.Bind(wx.EVT_MENU, self.Open,itemopenitem)
-        itemdetail = wx.MenuItem(menu, self.detail, "详细信息")
+        itemdetail  = wx.MenuItem(menu, self.detail, "详细信息")
         menu.AppendItem(itemdetail)
         itemmoveitem = wx.MenuItem(menu, self.moveitem, '移动')
         menu.AppendItem(itemmoveitem)
         self.Bind(wx.EVT_MENU, self.Move, itemmoveitem)
-#        itemaddtogroup=wx.MenuItem(menu, self.addtogroup, '增加到组')
-#        menu.AppendItem(itemaddtogroup)##--------------------------------此处添加级联菜单--所有组列表－－新建
+        itemaddtolist=wx.MenuItem(menu, self.add2list, '增加到组')
+        menu.AppendItem(itemaddtolist)##--------------------------------此处添加级联菜单--所有组列表－－新建
         #创建扩展菜单
-        imp = wx.Menu()
-        dirbookList = [item for item in os.listdir(os.getcwd()) if os.path.splitext(item)[1] in ('.list',)]
-        for i,item in enumerate(dirbookList):#将当前目录下的list文件加到扩展目录
-            name='booklist'+'%d', i
-            self.name=wx.NewId()#扩展菜单id
-            itemname  = wx.MenuItem(imp, self.name, item)#扩展菜单项目
-            imp.AppendItem(itemname)#增加扩展菜单
-#           imp.Append(-1, item)  
-#        imp.Append(-1, "Import newsfeed list...")  
-#        imp.Append(-1, "Import bookmarks...")  
-#        imp.Append(-1, "Import mail...")
+#---------------------------------------------------------------------
+#        imp = wx.Menu()
+#        dirbookList = [item for item in os.listdir(os.getcwd()) if os.path.splitext(item)[1] in ('.list',)]
+#        for i,self.item in enumerate(dirbookList):#将当前目录下的list文件加到扩展目录
+##            name='booklist'+'%d', i
+#            self.name=dirbookList
+#            self.itemname=dirbookList
+#            self.name[i]=wx.NewId()#扩展菜单id
+#            self.itemname[i]  = wx.MenuItem(imp, self.name[i], self.item)#扩展菜单项目
+#            imp.AppendItem(self.itemname[i])#增加扩展菜单
+##           imp.Append(-1, item)  
+##        imp.Append(-1, "Import newsfeed list...")  
+##        imp.Append(-1, "Import bookmarks...")  
+##        imp.Append(-1, "Import mail...")
 # #把这个菜单作为file的子菜单添加进来 用 AppenMenu() 方法  
-        menu.AppendMenu(-1, "&增加到组", imp)  
-   
+#        menu.AppendMenu(-1, "&增加到组", imp)  
+#-------------------------------------------------------------------------------------   
         itemdeleteitem=wx.MenuItem(menu, self.deleteitem, '删除此项')
         menu.AppendItem(itemdeleteitem)##--------------------------------此处添加级联菜单－－从硬盘删除－－从列表删除
         
@@ -191,7 +195,7 @@ class MyFrame(wx.Frame):
 #        itemProperty.Enable(False)#默认让属性按钮变成无效状态
         self.itemid = self.RightCtrl.GetFirstSelected()
 #       while itemid != -1:
-#        #Do something
+        #Do something
 #           itemid = self.RightCtrl.GetNextSelected(itemid)
         if self.itemid == -1:#如果没有选中任何项
             itemdetail.Enable(False)
@@ -201,18 +205,30 @@ class MyFrame(wx.Frame):
 #        print itemid
         #到这里才弹出菜单
         self.Bind(wx.EVT_MENU, self.Detail, itemdetail)
-        self.Bind(wx.EVT_MENU, self.add2group,itemname)
-        self.Bind(wx.EVT_MENU, self.Delete,itemdeleteitem)
+
+        self.Bind(wx.EVT_MENU, self.addtolist,itemaddtolist)
+#        for i in range(len(dirbookList)):
+#            self.Bind(wx.EVT_MENU, self.addtolist,self.itemname[i])
+#            print self.itemname[i]
+        self.Bind(wx.EVT_MENU, self.Deleteitem,itemdeleteitem)
         self.PopupMenu(menu)
         #最后注意销毁前面创建的菜单
         menu.Destroy()
 
+    def addtolist(self,event):
+   #     print self.itemname[i]
+        dlg = MyDialog()
+        dlg.about_txt = """输入你要添加到的组的组名"""
+        dlg.Bind(wx.EVT_BUTTON, dlg.addtolist, dlg.okay)
+        dlg.ShowModal()
+#        event.Skip()
+        pass
     def Detail(self,event):
 #        wx.MessageBox("请输入路径")
 #        print  data.rows[self.itemid][2]
         st = os.stat(data.rows[self.itemid][2])
         wx.MessageBox("路径:%s\n大小:%dbytes\n属主:%s  %s\n创建时间:%s\n最后访问:%s\n最后修改:%s"% (data.rows[self.itemid][2],st.st_size,st.st_uid,st.st_gid,time.ctime(st.st_ctime),time.ctime(st.st_atime),time.ctime(st.st_mtime)))
-    def Delete(self,event):
+    def Deleteitem(self,event):
         if os.path.isfile(data.rows[self.itemid][2][:-1]):
             os.remove(data.rows[self.itemid][2][:-1])
             self.RightCtrl.DeleteItem(self.itemid)
@@ -220,23 +236,20 @@ class MyFrame(wx.Frame):
         else:
             wx.MessageBox("文件不存在，请刷新列表")
             self.RightCtrl.DeleteItem(self.itemid)
-    def add2group(self,event):
-        pass
 
 
     def Open(self,filepath):
 	    open=eio.filepath#哥儿几个，帮忙看一下,哪儿格式不对 ^ v ^
-	    
 	    os.system(open)
     def Move(self,event):#有点问题，明天请教一下，很快完成
-	    dialog = wx.TextEntryDialog(None,"请输入目的路径","文件移动","",style=wx.OK|wx.CANCEL)
+	    dialog = wx.TextEntryDialog(None,
+			    "请输入目的路径",
+			    "文件移动","",style=wx.OK|wx.CANCEL)
 	    if dialog.ShowModal()==wx.ID_OK:
-             #shutil.move(data.rows[self.itemid][2],dialog.GetValue())
-		    #print "You entered:%s" % 
-        #    dest = dialog.GetValue()
-             cmd=' '.join(['mv',data.rows[self.itemid][2],dialog.GetValue()])
-             os.system(cmd)
-  #          shutil.move(data.rows[self.itemid][2],dialog.GetValue())
+		    print "You entered:%s" % dialog.GetValue()
+	    #	    cmd=' '.join(['mv',fname,dialog.GetVlaue()])
+            #		    os.system(cmd)
+ 
 #-------------------------------------------------------------------------------------------------------------
 
 
@@ -282,7 +295,7 @@ class MyFrame(wx.Frame):
         if os.path.splitext(fname)[1] in format:
             #fp = open("list.list",'a')
             print >> self.fp,fname+'          '+str(os.lstat(fname)[6])
-#self.fp,fname#,os.stat(fname)[6]#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            #self.fp,fname#,os.stat(fname)[6]
             #fp.close()
 
     def visitor(self,arg,dirname,fname):
@@ -345,9 +358,7 @@ class MyFrame(wx.Frame):
 
 
     def move(self, event): # wxGlade: MyFrame.<event_handler>
-        dlg = MoveDialog()
-        #dlg.Bind(wx.EVT_BUTTON, dlg.add, dlg.okay)
-        dlg.ShowModal()
+        print "Event handler `move' not implemented"
         event.Skip()
 
     def About(self, event): # wxGlade: MyFrame.<event_handler>
@@ -363,68 +374,6 @@ class MyFrame(wx.Frame):
         info.AddDeveloper('XiYouLinux')
         wx.AboutBox(info)
         event.Skip()
-
-class MoveDialog(wx.Dialog):
-    def __init__(self):
-        wx.Dialog.__init__(self, None, -1, "Validators: validating")
-
-        self.vTidyAbout_txt = """Welcome to XiYouLinux"""
-        # Create the text controls
-        self.vTidyAbout = wx.StaticText(self, -1, self.vTidyAbout_txt)
-        self.vSrcPath  = wx.StaticText(self, -1, "列表名称")
-        self.vDstPath  = wx.StaticText(self, -1, "目的路径")
-        self.vSrcInput = wx.TextCtrl(self, -1, "")
-        self.vDstInput = wx.TextCtrl(self, -1, "")
-        # Use standard button IDs
-        self.vOkay = wx.Button(self, wx.ID_OK)
-        self.vOkay.SetDefault()
-        self.vCancel = wx.Button(self, wx.ID_CANCEL)
-        # Layout with sizers
-        layout = wx.BoxSizer(wx.VERTICAL)
-        layout.Add(self.vTidyAbout, 0, wx.ALL, 5)
-        layout.Add(wx.StaticLine(self), 0, wx.EXPAND|wx.ALL, 5)
-
-        fgs = wx.FlexGridSizer(2, 0, 5, 5)
-        fgs.Add(self.vSrcPath, 0, wx.ALIGN_LEFT)
-        fgs.Add(self.vSrcInput, 0, wx.EXPAND|wx.ALL)
-        fgs.Add(self.vDstPath, 1, wx.ALIGN_LEFT)
-        fgs.Add(self.vDstInput, 1, wx.EXPAND|wx.ALL)
-        fgs.AddGrowableCol(1)
-        layout.Add(fgs, 0, wx.EXPAND|wx.ALL, 5)
-
-        btns = wx.StdDialogButtonSizer()
-        btns.AddButton(self.vOkay)
-        btns.AddButton(self.vCancel)
-        btns.Realize()
-        layout.Add(btns, 0, wx.EXPAND|wx.ALL, 5)
-        self.Bind(wx.EVT_BUTTON, self.fTidyRealize,self.vOkay)
-        self.SetSizer(layout)
-        layout.Fit(self)
-
-    def rename(self,old,new):
-        print 'begin to rename',old,new
-        new2=''
-        for i in range(0,len(new)-1,2):
-            a=new[i:i+2]
-            if a!='\xa1@':
-                new2+=a;
-        print 'new name =',new2
-        if new2!=old:
-            os.rename(old,new2)
-            print 'rename',old,'to',new2
-
-    def fTidyRealize(self,event):
-        SrcPath = self.vSrcInput.GetValue()
-        DstPath = self.vDstInput.GetValue()
-        
-        fp = open(SrcPath,"r")
-        for line in fp:
-            print line.split('        ')[0]
-            DstPath = DstPath + "/" +os.path.basename((line.split('        ')[0]))
-            print DstPath
-            self.rename(line.split('        ')[0], DstPath)
-        fp.close()
-                
 
 
 # end of class MyFrame
@@ -468,7 +417,14 @@ class MyDialog(wx.Dialog):
         newname = self.name.GetValue()+".list"
         os.remove(newname)
         event.Skip()
-    
+    def addtolist(self,event):
+        name=self.name.GetValue()+".list"
+        if os.path.isfile(self.name.GetValue()+".list"):
+            f=open(name,'a')
+            f.write(frame_1.data.rows[frame_1.OnContextMenu.self.itemid][2])
+            f.close()
+        else:
+            pass
         
 
 if __name__ == "__main__":
