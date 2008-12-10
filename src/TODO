@@ -16,4 +16,9 @@
 	2.冯LeftList的动态刷新、其余右键、文件信息格式以及内容、大小
 	3.李Tidy的实现
 08.12.8
-add2group
+	add2group
+08.12.9
+	命名规则，控件变量名以v开头，然后是方位加名字或父空间名，如 vRightMove
+	函数名一样，以f开头，如 fRightMove,fToolbarMove
+	总之，要让非参与者可以识别每一个变量
+	修改之～

@@ -211,21 +211,18 @@ class MyFrame(wx.Frame):
             f=open(name,'w')
             f.write(data.rows[self.itemid][2]+'          '+str(os.stat(data.rows[self.itemid][2])[6])+'\n')
             f.close()
-		 
+         
 
 
 
     def Open(self,filepath):
-	    open=eio.filepath#哥儿几个，帮忙看一下,哪儿格式不对 ^ v ^
-	    
-	    os.system(open)
+        open=eio.filepath#哥儿几个，帮忙看一下,哪儿格式不对 ^ v ^
+        
+        os.system(open)
     def Move(self,event):
-	    dialog = wx.TextEntryDialog(None,"请输入目的路径","文件移动","",style=wx.OK|wx.CANCEL)
-	    if dialog.ShowModal()==wx.ID_OK:
-            #shutil.move(data.rows[self.itemid][2],dialog.GetValue())
-             cmd=' '.join(['mv',data.rows[self.itemid][2],dialog.GetValue()])
-             os.system(cmd)
-#-------------------------------------------------------------------------------------------------------------
+        self.dialog = wx.TextEntryDialog(None,"请输入目的路径","文件移动","",style=wx.OK|wx.CANCEL)
+        if self.dialog.ShowModal()==wx.ID_OK:
+            shutil.move(data.rows[self.itemid][2].replace("\n",""), self.dialog.GetValue().encode("utf-8").replace("\n",""))
 
 
     def ListRightButton(self, event):
@@ -233,7 +230,7 @@ class MyFrame(wx.Frame):
         AddGroup = wx.MenuItem(menu, wx.NewId(),"增加一个组")
         menu.AppendItem(AddGroup)
         DelGroup = wx.MenuItem(menu, wx.NewId(),"删除一个组")
-        menu.AppendItem(DelGroup)
+        menu.AppendItem(DelGrouges)
         self.Bind(wx.EVT_MENU, self.Add, AddGroup)
         self.Bind(wx.EVT_MENU, self.Del, DelGroup)
         self.PopupMenu(menu)
@@ -277,13 +274,11 @@ class MyFrame(wx.Frame):
             fpath = os.path.join(dirname,name)
             if not os.path.isdir(fpath):
                 self.visitfile(fpath,arg)
-    #           if format in os.path.splitext(fname)[1]:
-    #               print >> fp,fname
     def searcher(self,path, format): 
         os.path.walk(path,self.visitor,format)
                 
 
-    def find(self, event): # wxGlade: MyFrame.<event_handler>
+    def find(self, event): 
         key = self.vInputKey.GetValue()
         fp = open("list.list", 'r')
         bo=[]
@@ -386,31 +381,18 @@ class MoveDialog(wx.Dialog):
         layout.Add(btns, 0, wx.EXPAND|wx.ALL, 5)
         self.Bind(wx.EVT_BUTTON, self.fTidyRealize,self.vOkay)
         self.SetSizer(layout)
-        layout.Fit(self)
-
-    def rename(self,old,new):
-        print 'begin to rename',old,new
-        new2=''
-        for i in range(0,len(new)-1,2):
-            a=new[i:i+2]
-            if a!='\xa1@':
-                new2+=a;
-        print 'new name =',new2
-        if new2!=old:
-            os.rename(old,new2)
-            print 'rename',old,'to',new2
+        layout.Fit(self)  
 
     def fTidyRealize(self,event):
         SrcPath = self.vSrcInput.GetValue()
-        DstPath = self.vDstInput.GetValue()
-        
         fp = open(SrcPath,"r")
         for line in fp:
-            print line.split('        ')[0]
-            DstPath = DstPath + "/" +os.path.basename((line.split('        ')[0]))
-            print DstPath
-            self.rename(line.split('        ')[0], DstPath)
+            print line.split('        ')[0].replace("\n","")
+            DstPath = self.vDstInput.GetValue() + "/" + os.path.basename((line.split('        ')[0]))
+            print DstPath.replace("\n","")
+            shutil.move(line.split('        ')[0].replace("\n",""), DstPath.replace("\n",""))
         fp.close()
+        event.Skip()
                 
 
 
