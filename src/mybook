@@ -26,17 +26,18 @@ class MyFrame(wx.Frame):
         self.vToolbar = wx.ToolBar(self, -1)
         self.SetToolBar(self.vToolbar)
         vTidy = self.vToolbar.AddLabelTool(wx.NewId(), u"整理", wx.Bitmap("./picture/tidy.jpeg", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "", "")
+        vSortbytype = self.vToolbar.AddLabelTool(wx.NewId(), u"按文件类型分组", wx.Bitmap("./picture/sortbytype.jpeg", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "", "")
         vAbout = self.vToolbar.AddLabelTool(wx.NewId(), u"关于", wx.Bitmap("./picture/about.jpeg", wx.BITMAP_TYPE_ANY),wx.NullBitmap, wx.ITEM_NORMAL, "", "")
         # Tool Bar end
         self.vStaticPath = wx.StaticText(self, -1, u"路径", style=wx.ALIGN_CENTRE)
         self.vInputPath = wx.TextCtrl(self, -1, "/")
         self.vStaticType = wx.StaticText(self, -1, u"文件类型\n", style=wx.ALIGN_CENTRE)
-        self.vInputType = wx.TextCtrl(self, -1, "pdf odt chm")
+        self.vInputType = wx.TextCtrl(self, -1, "pdf odt chm doc")
         self.vBeginSearch = wx.Button(self, -1, u"开始搜索")
         self.vStaticKey = wx.StaticText(self, -1, u"请输入关键字", style=wx.ALIGN_CENTRE)
         self.vInputKey = wx.TextCtrl(self, -1, "")
         self.vBeginFind = wx.Button(self, -1, u"搜索关键字")
-        self.vLeftListBox = wx.ListBox(self, -1, choices=[item for item in os.listdir(os.getcwd()) if os.path.splitext(item)[1] in ('.list',)])
+        self.vLeftListBox = wx.ListBox(self, -1, choices=[os.path.splitext(item)[0] for item in os.listdir(os.getcwd()) if os.path.splitext(item)[1] in ('.list',)])
  
         #listctrl
         il = wx.ImageList(16,16, True)
@@ -67,6 +68,7 @@ class MyFrame(wx.Frame):
         self.__do_layout()
 
         self.Bind(wx.EVT_TOOL, self.move, vTidy)
+        self.Bind(wx.EVT_TOOL, self.Sortbytype, vSortbytype)
         self.Bind(wx.EVT_TOOL, self.About, vAbout)
         self.Bind(wx.EVT_BUTTON, self.search, self.vBeginSearch)
         self.Bind(wx.EVT_BUTTON, self.find, self.vBeginFind)
@@ -208,7 +210,11 @@ class MyFrame(wx.Frame):
             f=open(name,'w')
             f.write(data.rows[self.itemid][2]+'          '+str(os.stat(data.rows[self.itemid][2])[6])+'\n')
             f.close()
-         
+        self.vLeftListBox.Destroy()#销毁之前的窗口
+        self.vLeftListBox = wx.ListBox(self, -1, choices=[os.path.splitext(item)[0] for item in os.listdir(os.getcwd()) if os.path.splitext(item)[1] in ('.list',)])
+        self.__do_layout()#重新加载窗体布局
+        self.Bind(wx.EVT_CONTEXT_MENU, self.ListRightButton, self.vLeftListBox)
+        self.Bind(wx.EVT_LISTBOX, self.ButtonClick, self.vLeftListBox)
 
 
 
@@ -217,17 +223,48 @@ class MyFrame(wx.Frame):
         
         os.system(open)
     def Move(self,event):
-        self.dialog = wx.TextEntryDialog(None,"请输入目的路径","文件移动","rew",style=wx.OK|wx.CANCEL)
+        self.dialog = wx.TextEntryDialog(None,"请输入目的路径","文件移动",os.path.expanduser('~/'),style=wx.OK|wx.CANCEL)
         if self.dialog.ShowModal()==wx.ID_OK:
-            dstname = self.dialog.GetValue().encode("utf-8").replace("\n","") + "/"
-            if "/" not in dstname:
+            dstname = self.dialog.GetValue()
+            if not os.path.isdir(dstname):
                 wx.MessageBox("请输入绝对路径")
-            print dstname+os.path.basename(data.rows[self.itemid][2].replace("\n",""))
-            if os.path.isfile(dstname+os.path.basename(data.rows[self.itemid][2].replace("\n",""))):
+            if os.path.isfile(dstname+os.path.basename(data.rows[self.itemid][2])):
                 wx.MessageBox("目的文件已存在")
-                event.skip()
-            shutil.move(data.rows[self.itemid][2].replace("\n",""), dstname)
-            event.skip()
+            if not os.path.isfile(os.path.basename(data.rows[self.itemid][2])):
+                wx.MessageBox("源文件不存在")
+            else:
+                shutil.move(data.rows[self.itemid][2], dstname)
+            event.Skip()
+
+    def Sortbytype(self,event):
+        f = open('list.list','r')
+        alllines=f.readlines()
+        f.close()
+        pdf=open('pdf.list','w')
+        doc=open('doc.list','w')
+        chm=open('chm.list','w')
+        other=open('other.list','w')
+        for line in alllines:
+            if 'pdf' in  os.path.splitext(os.path.basename(line.split('        ')[0]))[1]:
+                pdf.write(line)
+            elif 'chm' in os.path.splitext(os.path.basename(line.split('        ')[0]))[1]:
+                chm.write(line)
+            elif 'doc' in os.path.splitext(os.path.basename(line.split('        ')[0]))[1]:
+                doc.write(line)
+            else:
+                other.write(line)
+        else:
+            wx.MessageBox("分类成功！！！")
+        pdf.close()
+        chm.close()
+        doc.close()
+        other.close()
+        self.vLeftListBox.Destroy()#销毁之前的窗口
+        self.vLeftListBox = wx.ListBox(self, -1, choices=[os.path.splitext(item)[0] for item in os.listdir(os.getcwd()) if os.path.splitext(item)[1] in ('.list',)])
+        self.__do_layout()#重新加载窗体布局
+        self.Bind(wx.EVT_CONTEXT_MENU, self.ListRightButton, self.vLeftListBox)
+        self.Bind(wx.EVT_LISTBOX, self.ButtonClick, self.vLeftListBox)
+
 
     def ListRightButton(self, event):
         menu = wx.Menu()
@@ -237,8 +274,17 @@ class MyFrame(wx.Frame):
         menu.AppendItem(DelGroup)
         self.Bind(wx.EVT_MENU, self.Add, AddGroup)
         self.Bind(wx.EVT_MENU, self.Del, DelGroup)
-        self.PopupMenu(menu)
+        self.PopupMenu(menu)        
         menu.Destroy()
+        self.vLeftListBox.Destroy()#销毁之前的窗口
+        self.vLeftListBox = wx.ListBox(self, -1, choices=[os.path.splitext(item)[0] for item in os.listdir(os.getcwd()) if os.path.splitext(item)[1] in ('.list',)])
+        self.__do_layout()#重新加载窗体布局
+        self.Bind(wx.EVT_CONTEXT_MENU, self.ListRightButton, self.vLeftListBox)
+        self.Bind(wx.EVT_LISTBOX, self.ButtonClick, self.vLeftListBox)
+
+
+
+
     def Add(self, event):
         self.dialog = wx.TextEntryDialog(None,"请输入分类名称","创建分类","",style=wx.OK|wx.CANCEL)
         if self.dialog.ShowModal()==wx.ID_OK:
@@ -246,6 +292,9 @@ class MyFrame(wx.Frame):
             f=open(newname, "w")
             f.close()
         event.Skip()
+
+
+
     def Del(self, event):
         self.dialog = wx.TextEntryDialog(None,"请输入分裂名称","删除分类","",style=wx.OK|wx.CANCEL)
         if self.dialog.ShowModal()==wx.ID_OK:
@@ -270,6 +319,7 @@ class MyFrame(wx.Frame):
         self.searcher(path.encode("utf-8"), trueformat)
         self.fp.close()
         event.Skip()
+
     def visitfile(self,fname,format):
         if os.path.splitext(fname)[1] in format:
              print >> self.fp,fname+'          '+str(os.stat(fname)[6])
@@ -296,6 +346,8 @@ class MyFrame(wx.Frame):
              bo.append('对不起，您搜索的电子书不在列表中！！                            ')
         fp.close() 
         data.rows=[(os.path.splitext(os.path.basename(line.split('        ')[0]))[0], line.split('        ')[-1],line.split('        ')[0])for line in bo]
+
+
 
 #listctrl
         self.RightCtrl.Destroy()
@@ -333,6 +385,7 @@ class MyFrame(wx.Frame):
         dlg.ShowModal()
         event.Skip()
 
+
     def About(self, event): 
         description = "E-book Manage System"
         licence = "GPL v3"
@@ -346,6 +399,7 @@ class MyFrame(wx.Frame):
         info.AddDeveloper('XiYouLinux')
         wx.AboutBox(info)
         event.Skip()
+
 
 class MoveDialog(wx.Dialog):
     def __init__(self):
@@ -383,6 +437,8 @@ class MoveDialog(wx.Dialog):
         self.Bind(wx.EVT_BUTTON, self.fTidyRealize,self.vOkay)
         self.SetSizer(layout)
         layout.Fit(self)  
+
+
 
     def fTidyRealize(self,event):
         SrcPath = self.vSrcInput.GetValue()
