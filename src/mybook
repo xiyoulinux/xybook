@@ -189,7 +189,7 @@ class MyFrame(wx.Frame):
 
     def Detail(self,event):
         st = os.stat(data.rows[self.itemid][2])
-        wx.MessageBox("路径:%s\n大小:%dbytes\n属主:%s  %s\n创建时间:%s\n最后访问:%s\n最后修改:%s"% (data.rows[self.itemid][2],st.st_size,st.st_uid,st.st_gid,time.ctime(st.st_ctime),time.ctime(st.st_atime),time.ctime(st.st_mtime)))
+        wx.MessageBox("路径:%s\n大小:%dbytes     %fMbytes\n属主:%s  %s\n创建时间:%s\n最后访问:%s\n最后修改:%s"% (data.rows[self.itemid][2],st.st_size,st.st_size*1.0/1048576.0,st.st_uid,st.st_gid,time.ctime(st.st_ctime),time.ctime(st.st_atime),time.ctime(st.st_mtime)))
     def Deleteitem(self,event):
         if os.path.isfile(data.rows[self.itemid][2]):
             os.remove(data.rows[self.itemid][2])
@@ -220,14 +220,20 @@ class MyFrame(wx.Frame):
 
     def Open(self,event):
 #    os.path.splitext(fname)[1]
-        if os.path.splitext(data.rows[self.itemid][2])[1] in ['.doc','.eio']:
-            cmd=str('eio'+' '+'\''+data.rows[self.itemid][2]+'\'')
+#        if os.path.splitext(data.rows[self.itemid][2])[1] in ['.doc','.eio']:
+#            cmd=str('eio'+' '+'\''+data.rows[self.itemid][2]+'\'')
         if os.path.splitext(data.rows[self.itemid][2])[1] in ['.pdf']:
             cmd=str('evince'+' '+'\''+data.rows[self.itemid][2]+'\'')
-        if os.path.splitext(data.rows[self.itemid][2])[1] in ['.chm']:
+        elif os.path.splitext(data.rows[self.itemid][2])[1] in ['.chm']:
             cmd=str('chmsee'+' '+'\''+data.rows[self.itemid][2]+'\'')
-        if os.path.splitext(data.rows[self.itemid][2])[1] in ['.odt']:
+        elif os.path.splitext(data.rows[self.itemid][2])[1] in ['.odt','.doc']:
             cmd=str('openoffice'+' '+'\''+data.rows[self.itemid][2]+'\'')
+        else:
+            self.dialog = wx.TextEntryDialog(None,"该文件类型未与软件相关联，选择打开方式","选择打开方式","",style=wx.OK|wx.CANCEL)
+            if self.dialog.ShowModal()==wx.ID_OK:
+                cmd=str(self.dialog.GetValue()+' '+'\''+data.rows[self.itemid][2]+'\'')
+            else:
+                pass
         os.system(cmd)
     def Move(self,event):
         self.dialog = wx.TextEntryDialog(None,"请输入目的路径","文件移动",os.path.expanduser('~/'),style=wx.OK|wx.CANCEL)

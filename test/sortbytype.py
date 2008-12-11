@@ -12,11 +12,11 @@ doc=open('doc.list','w')
 chm=open('chm.list','w')
 other=open('other.list','w')
 for line in alllines:
-	if 'pdf' in os.path.splitext(line)[1]:
+	if 'pdf' in  os.path.splitext(os.path.basename(line.split('        ')[0]))[1]:
 		pdf.write(line)
-	elif 'chm' in os.path.splitext(line)[1]:
+	elif 'chm' in os.path.splitext(os.path.basename(line.split('        ')[0]))[1]:
 		chm.write(line)
-	elif 'doc' in os.path.splitext(line)[1]:
+	elif 'doc' in os.path.splitext(os.path.basename(line.split('        ')[0]))[1]:
 		doc.write(line)
 	else:
 		other.write(line)
