@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-
 import wx
 import wx.grid
 import os
@@ -12,7 +11,6 @@ import data
 import shutil
 import time
 
-
 class MyFrame(wx.Frame):
     def __init__(self, *args, **kwds):
         kwds["style"] = wx.DEFAULT_FRAME_STYLE
@@ -21,7 +19,6 @@ class MyFrame(wx.Frame):
         wx.SplashScreen(RunPicture, wx.SPLASH_CENTRE_ON_SCREEN | wx.SPLASH_TIMEOUT,1000, None, -1)
         wx.Yield()
         wx.Frame.__init__(self, *args, **kwds)
-
         # Tool Bar
         self.vToolbar = wx.ToolBar(self, -1)
         self.SetToolBar(self.vToolbar)
@@ -37,8 +34,7 @@ class MyFrame(wx.Frame):
         self.vStaticKey = wx.StaticText(self, -1, u"请输入关键字", style=wx.ALIGN_CENTRE)
         self.vInputKey = wx.TextCtrl(self, -1, "")
         self.vBeginFind = wx.Button(self, -1, u"搜索关键字")
-        self.vLeftListBox = wx.ListBox(self, -1, choices=[os.path.splitext(item)[0] for item in os.listdir(os.getcwd()) if os.path.splitext(item)[1] in ('.list',)])
- 
+        self.vLeftListBox = wx.ListBox(self, -1, choices=[os.path.splitext(item)[0] for item in os.listdir(os.getcwd()) if os.path.splitext(item)[1] in ('.list',)]) 
         #listctrl
         il = wx.ImageList(16,16, True)
         for name in glob.glob("./picture/smicon??.png"):
@@ -46,18 +42,14 @@ class MyFrame(wx.Frame):
             il_max = il.Add(RunPicture)
         self.RightCtrl = wx.ListCtrl(self, -1, style=wx.LC_REPORT)
         self.RightCtrl.AssignImageList(il, wx.IMAGE_LIST_SMALL)
-        # Add some columns
         for col, text in enumerate(data.columns):
             self.RightCtrl.InsertColumn(col, text)
-        # Add the rows
         for item in data.rows:
             index = self.RightCtrl.InsertStringItem(sys.maxint, item[0])
             for col, text in enumerate(item[1:]):
                 self.RightCtrl.SetStringItem(index, col+1, text)
-        # give each item a random image
             img = random.randint(0, il_max)
             self.RightCtrl.SetItemImage(index, img, img)
-        # set the width of the columns in various ways
         self.RightCtrl.SetColumnWidth(0, 200)
         self.RightCtrl.SetColumnWidth(1, 100)
         self.RightCtrl.SetColumnWidth(2, wx.LIST_AUTOSIZE)
@@ -66,25 +58,23 @@ class MyFrame(wx.Frame):
         self.__set_properties()
         self.__do_layout()
 
-        self.Bind(wx.EVT_TOOL, self.move, vTidy)
+        self.Bind(wx.EVT_TOOL, self.Tidy, vTidy)
         self.Bind(wx.EVT_TOOL, self.Sortbytype, vSortbytype)
         self.Bind(wx.EVT_TOOL, self.About, vAbout)
-        self.Bind(wx.EVT_BUTTON, self.search, self.vBeginSearch)
-        self.Bind(wx.EVT_BUTTON, self.find, self.vBeginFind)
+        self.Bind(wx.EVT_BUTTON, self.Search, self.vBeginSearch)
+        self.Bind(wx.EVT_BUTTON, self.Find, self.vBeginFind)
         self.Bind(wx.EVT_CONTEXT_MENU, self.ListRightButton, self.vLeftListBox)
         self.Bind(wx.EVT_LISTBOX, self.ButtonClick, self.vLeftListBox)
         self.RightCtrl.Bind(wx.EVT_CONTEXT_MENU, self.OnContextMenu)
         # end wxGlade
 
     def __set_properties(self):
-        # begin wxGlade: MyFrame.__set_properties
         self.SetTitle("Python e-book Management System")
         self.SetSize((900, 650))
         self.vToolbar.Realize()
         # end wxGlade
 
     def __do_layout(self):
-        # begin wxGlade: MyFrame.__do_layout
         sizer_1 = wx.BoxSizer(wx.VERTICAL)
         sizer_2 = wx.BoxSizer(wx.VERTICAL)
         sizer_3 = wx.BoxSizer(wx.HORIZONTAL)
@@ -112,9 +102,7 @@ class MyFrame(wx.Frame):
         n=self.vLeftListBox.GetSelection()
         sampleList = [item for item in os.listdir(os.getcwd()) if os.path.splitext(item)[1] in ('.list',)]
         f = open(sampleList[n],'r')
- #       data.rows=[(os.path.splitext(os.path.basename(line))[0],'','',line)for line in f]
         data.rows=[(os.path.splitext(os.path.basename(line.split('        ')[0]))[0], line.split('        ')[-1],line.split('        ')[0])for line in f]
-
         f.close()
         #listctrl
         self.RightCtrl.Destroy()#销毁之前的窗口
@@ -125,23 +113,21 @@ class MyFrame(wx.Frame):
         self.RightCtrl = wx.ListCtrl(self, -1, style=wx.LC_REPORT)#建立右边窗体
         self.RightCtrl.AssignImageList(il, wx.IMAGE_LIST_SMALL)#定义窗体显示类型
         self.__do_layout()#重新加载窗体布局
-        # Add some columns
         for col, text in enumerate(data.columns):
             self.RightCtrl.InsertColumn(col, text)
-        # add the rows
         for item in data.rows:
             index = self.RightCtrl.InsertStringItem(sys.maxint, item[0])
             for col, text in enumerate(item[1:]):
                 self.RightCtrl.SetStringItem(index, col+1, text)
-        # give each item a random image
             img = random.randint(0, il_max)
             self.RightCtrl.SetItemImage(index, img, img)                
-        # set the width of the columns in various ways
         self.RightCtrl.SetColumnWidth(0, 200)
         self.RightCtrl.SetColumnWidth(1, 100)
         self.RightCtrl.SetColumnWidth(2, wx.LIST_AUTOSIZE)
         self.RightCtrl.Bind(wx.EVT_CONTEXT_MENU, self.OnContextMenu)
-     #右键菜单
+        event.Skip()
+
+      #右键菜单
     def OnContextMenu(self, event):
         self.openitem = wx.NewId()
         self.detail = wx.NewId()
@@ -161,8 +147,7 @@ class MyFrame(wx.Frame):
         itemaddtolist=wx.MenuItem(menu, self.add2list, '增加到组')
         menu.AppendItem(itemaddtolist)
         itemdeleteitem=wx.MenuItem(menu, self.deleteitem, '删除此项')
-        menu.AppendItem(itemdeleteitem)
-        
+        menu.AppendItem(itemdeleteitem)        
         
         self.itemid = self.RightCtrl.GetFirstSelected()
         if self.itemid == -1:#如果没有选中任何项
@@ -177,6 +162,7 @@ class MyFrame(wx.Frame):
         self.PopupMenu(menu)
           #最后销毁前面创建的菜单
         menu.Destroy()
+        event.Skip()
 
     def Detail(self,event):
         st = os.stat(data.rows[self.itemid][2])
@@ -206,13 +192,9 @@ class MyFrame(wx.Frame):
         self.__do_layout()#重新加载窗体布局
         self.Bind(wx.EVT_CONTEXT_MENU, self.ListRightButton, self.vLeftListBox)
         self.Bind(wx.EVT_LISTBOX, self.ButtonClick, self.vLeftListBox)
-
-
+        event.Skip()
 
     def Open(self,event):
-#    os.path.splitext(fname)[1]
-#        if os.path.splitext(data.rows[self.itemid][2])[1] in ['.doc','.eio']:
-#            cmd=str('eio'+' '+'\''+data.rows[self.itemid][2]+'\'')
         if os.path.splitext(data.rows[self.itemid][2])[1] in ['.pdf']:
             cmd=str('evince'+' '+'\''+data.rows[self.itemid][2]+'\'')
         elif os.path.splitext(data.rows[self.itemid][2])[1] in ['.chm']:
@@ -226,6 +208,8 @@ class MyFrame(wx.Frame):
             else:
                 pass
         os.system(cmd)
+        event.Skip()
+
     def Move(self,event):
         self.dialog = wx.TextEntryDialog(None,"请输入目的路径","文件移动",os.path.expanduser('~/'),style=wx.OK|wx.CANCEL)
         if self.dialog.ShowModal()==wx.ID_OK:
@@ -266,7 +250,7 @@ class MyFrame(wx.Frame):
         self.__do_layout()#重新加载窗体布局
         self.Bind(wx.EVT_CONTEXT_MENU, self.ListRightButton, self.vLeftListBox)
         self.Bind(wx.EVT_LISTBOX, self.ButtonClick, self.vLeftListBox)
-
+        event.Skip()
 
     def ListRightButton(self, event):
         menu = wx.Menu()
@@ -274,8 +258,8 @@ class MyFrame(wx.Frame):
         menu.AppendItem(AddGroup)
         DelGroup = wx.MenuItem(menu, wx.NewId(),"删除一个组")
         menu.AppendItem(DelGroup)
-        self.Bind(wx.EVT_MENU, self.Add, AddGroup)
-        self.Bind(wx.EVT_MENU, self.Del, DelGroup)
+        self.Bind(wx.EVT_MENU, self.ListAdd, AddGroup)
+        self.Bind(wx.EVT_MENU, self.ListDel, DelGroup)
         self.PopupMenu(menu)        
         menu.Destroy()
         self.vLeftListBox.Destroy()#销毁之前的窗口
@@ -283,29 +267,22 @@ class MyFrame(wx.Frame):
         self.__do_layout()#重新加载窗体布局
         self.Bind(wx.EVT_CONTEXT_MENU, self.ListRightButton, self.vLeftListBox)
         self.Bind(wx.EVT_LISTBOX, self.ButtonClick, self.vLeftListBox)
-
-
-
-
-    def Add(self, event):
+        event.Skip()
+    def ListAdd(self, event):
         self.dialog = wx.TextEntryDialog(None,"请输入分类名称","创建分类","",style=wx.OK|wx.CANCEL)
         if self.dialog.ShowModal()==wx.ID_OK:
             newname = self.dialog.GetValue()+".list"
             f=open(newname, "w")
             f.close()
         event.Skip()
-
-
-
-    def Del(self, event):
+    def ListDel(self, event):
         self.dialog = wx.TextEntryDialog(None,"请输入分裂名称","删除分类","",style=wx.OK|wx.CANCEL)
         if self.dialog.ShowModal()==wx.ID_OK:
             newname = self.dialog.GetValue()+".list"
             os.remove(newname)
         event.Skip()
 
-
-    def search(self, event): 
+    def Search(self, event): 
         path = self.vInputPath.GetValue()
         format = self.vInputType.GetValue()
         if path == '' :
@@ -321,11 +298,9 @@ class MyFrame(wx.Frame):
         self.searcher(path.encode("utf-8"), trueformat)
         self.fp.close()
         event.Skip()
-
     def visitfile(self,fname,format):
         if os.path.splitext(fname)[1] in format:
              print >> self.fp,fname+'          '+str(os.stat(fname)[6])
-
     def visitor(self,arg,dirname,fname):
         for name in fname:
             fpath = os.path.join(dirname,name)
@@ -333,9 +308,8 @@ class MyFrame(wx.Frame):
                 self.visitfile(fpath,arg)
     def searcher(self,path, format): 
         os.path.walk(path,self.visitor,format)
-                
-
-    def find(self, event): 
+              
+    def Find(self, event): 
         key = self.vInputKey.GetValue()
         fp = open("list.list", 'r')
         bo=[]
@@ -348,9 +322,6 @@ class MyFrame(wx.Frame):
              bo.append('对不起，您搜索的电子书不在列表中！！                            ')
         fp.close() 
         data.rows=[(os.path.splitext(os.path.basename(line.split('        ')[0]))[0], line.split('        ')[-1],line.split('        ')[0])for line in bo]
-
-
-
 #listctrl
         self.RightCtrl.Destroy()
         il = wx.ImageList(16,16, True)
@@ -360,33 +331,24 @@ class MyFrame(wx.Frame):
         self.RightCtrl = wx.ListCtrl(self, -1, style=wx.LC_REPORT)
         self.RightCtrl.AssignImageList(il, wx.IMAGE_LIST_SMALL)
         self.__do_layout()
-        # Add some columns
         for col, text in enumerate(data.columns):
             self.RightCtrl.InsertColumn(col, text)
-
-        # add the rows
         for item in data.rows:
             index = self.RightCtrl.InsertStringItem(sys.maxint, item[0])
             for col, text in enumerate(item[1:]):
                 self.RightCtrl.SetStringItem(index, col+1, text)
-
-            # give each item a random image
             img = random.randint(0, il_max)
             self.RightCtrl.SetItemImage(index, img, img)
                 
-        # set the width of the columns in various ways
         self.RightCtrl.SetColumnWidth(0, 200)
-        self.RightCtrl.SetColumnWidth(1, 100)#wx.LIST_AUTOSIZE)
+        self.RightCtrl.SetColumnWidth(1, 100)
         self.RightCtrl.SetColumnWidth(2, wx.LIST_AUTOSIZE)
-       # self.RightCtrl.SetColumnWidth(3, 400)
         self.RightCtrl.Bind(wx.EVT_CONTEXT_MENU, self.OnContextMenu)
 
-
-    def move(self, event): 
+    def Tidy(self, event): 
         dlg = MoveDialog()
         dlg.ShowModal()
         event.Skip()
-
 
     def About(self, event): 
         description = "E-book Manage System"
@@ -398,10 +360,9 @@ class MyFrame(wx.Frame):
         info.SetWebSite('http://www.xiyoulinux.cn')
         info.SetDescription(description)
         info.SetLicence(licence)
-        info.AddDeveloper('XiYouLinux')
+        info.AddDeveloper('Author:\nLi Lei                 lilei1008@gmail.com\nFeng LiQiang     blueskyflq@gmail.com\nMi ChengGang  michenggang@gmail.com\nPan Meng          xypmdxx@gmail.com')
         wx.AboutBox(info)
         event.Skip()
-
 
 class MoveDialog(wx.Dialog):
     def __init__(self):
@@ -439,9 +400,6 @@ class MoveDialog(wx.Dialog):
         self.Bind(wx.EVT_BUTTON, self.fTidyRealize,self.vOkay)
         self.SetSizer(layout)
         layout.Fit(self)  
-
-
-
     def fTidyRealize(self,event):
         SrcPath = self.vSrcInput.GetValue() + ".list"
         fp = open(SrcPath,"r")
@@ -451,13 +409,12 @@ class MoveDialog(wx.Dialog):
             print DstPath.replace("\n","")
             shutil.move(line.split('        ')[0].replace("\n",""), DstPath.replace("\n",""))
         fp.close()
-        event.Skip()
-                
+        event.Skip()                
 
 if __name__ == "__main__":
     app = wx.PySimpleApp(0)
     wx.InitAllImageHandlers()
-    frame_1 = MyFrame(None, -1, "")
-    app.SetTopWindow(frame_1)
-    frame_1.Show()
+    PEMS = MyFrame(None, -1, "")
+    app.SetTopWindow(PEMS)
+    PEMS.Show()
     app.MainLoop()
