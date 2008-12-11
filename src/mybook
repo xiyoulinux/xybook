@@ -143,13 +143,12 @@ class MyFrame(wx.Frame):
         self.RightCtrl.Bind(wx.EVT_CONTEXT_MENU, self.OnContextMenu)
      #右键菜单
     def OnContextMenu(self, event):
-        #定义id
         self.openitem = wx.NewId()
         self.detail = wx.NewId()
         self.moveitem = wx.NewId()
         self.add2list = wx.NewId()
         self.deleteitem=wx.NewId()
-        # 创建菜单
+ 
         menu = wx.Menu()
         itemopenitem  = wx.MenuItem(menu, self.openitem, "打开文件")
         menu.AppendItem(itemopenitem)
@@ -171,12 +170,12 @@ class MyFrame(wx.Frame):
         else:
             itemdetail.Enable(True)
             itemmoveitem.Enable(True)
-        #弹出菜单
+          #弹出菜单
         self.Bind(wx.EVT_MENU, self.Detail, itemdetail)
         self.Bind(wx.EVT_MENU, self.addtolist,itemaddtolist)
         self.Bind(wx.EVT_MENU, self.Deleteitem,itemdeleteitem)
         self.PopupMenu(menu)
-        #最后销毁前面创建的菜单
+          #最后销毁前面创建的菜单
         menu.Destroy()
 
     def Detail(self,event):
@@ -230,13 +229,11 @@ class MyFrame(wx.Frame):
     def Move(self,event):
         self.dialog = wx.TextEntryDialog(None,"请输入目的路径","文件移动",os.path.expanduser('~/'),style=wx.OK|wx.CANCEL)
         if self.dialog.ShowModal()==wx.ID_OK:
-            dstname = self.dialog.GetValue()
-            if not os.path.isdir(dstname):
+            dstname = self.dialog.GetValue().encode("utf-8").replace("\n","") + "/"
+            if "/" not in dstname:
                 wx.MessageBox("请输入绝对路径")
-            if os.path.isfile(dstname+os.path.basename(data.rows[self.itemid][2])):
+            if os.path.isfile(dstname+os.path.basename(data.rows[self.itemid][2].replace("\n",""))):
                 wx.MessageBox("目的文件已存在")
-            if not os.path.isfile(os.path.basename(data.rows[self.itemid][2])):
-                wx.MessageBox("源文件不存在")
             else:
                 shutil.move(data.rows[self.itemid][2], dstname)
         event.Skip()
@@ -446,7 +443,7 @@ class MoveDialog(wx.Dialog):
 
 
     def fTidyRealize(self,event):
-        SrcPath = self.vSrcInput.GetValue()
+        SrcPath = self.vSrcInput.GetValue() + ".list"
         fp = open(SrcPath,"r")
         for line in fp:
             print line.split('        ')[0].replace("\n","")
