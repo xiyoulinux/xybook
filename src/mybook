@@ -32,7 +32,7 @@ class MyFrame(wx.Frame):
         self.vStaticPath = wx.StaticText(self, -1, u"路径", style=wx.ALIGN_CENTRE)
         self.vInputPath = wx.TextCtrl(self, -1, "/")
         self.vStaticType = wx.StaticText(self, -1, u"文件类型\n", style=wx.ALIGN_CENTRE)
-        self.vInputType = wx.TextCtrl(self, -1, "pdf odt chm doc")
+        self.vInputType = wx.TextCtrl(self, -1, "pdf chm odt doc")
         self.vBeginSearch = wx.Button(self, -1, u"开始搜索")
         self.vStaticKey = wx.StaticText(self, -1, u"请输入关键字", style=wx.ALIGN_CENTRE)
         self.vInputKey = wx.TextCtrl(self, -1, "")
@@ -59,9 +59,8 @@ class MyFrame(wx.Frame):
             self.RightCtrl.SetItemImage(index, img, img)
         # set the width of the columns in various ways
         self.RightCtrl.SetColumnWidth(0, 200)
-        self.RightCtrl.SetColumnWidth(1, 100)#wx.LIST_AUTOSIZE)
+        self.RightCtrl.SetColumnWidth(1, 100)
         self.RightCtrl.SetColumnWidth(2, wx.LIST_AUTOSIZE)
-#        self.RightCtrl.SetColumnWidth(3, 400)
 #end listctrl
 
         self.__set_properties()
@@ -139,9 +138,8 @@ class MyFrame(wx.Frame):
             self.RightCtrl.SetItemImage(index, img, img)                
         # set the width of the columns in various ways
         self.RightCtrl.SetColumnWidth(0, 200)
-        self.RightCtrl.SetColumnWidth(1, 100)#wx.LIST_AUTOSIZE)
+        self.RightCtrl.SetColumnWidth(1, 100)
         self.RightCtrl.SetColumnWidth(2, wx.LIST_AUTOSIZE)
-      #  self.RightCtrl.SetColumnWidth(3, 400)
         self.RightCtrl.Bind(wx.EVT_CONTEXT_MENU, self.OnContextMenu)
      #右键菜单
     def OnContextMenu(self, event):
@@ -167,20 +165,14 @@ class MyFrame(wx.Frame):
         menu.AppendItem(itemdeleteitem)
         
         
-#        itemProperty.Enable(False)#默认让属性按钮变成无效状态
         self.itemid = self.RightCtrl.GetFirstSelected()
-#       while itemid != -1:
-#        #Do something
-#           itemid = self.RightCtrl.GetNextSelected(itemid)
         if self.itemid == -1:#如果没有选中任何项
             itemdetail.Enable(False)
         else:
             itemdetail.Enable(True)
             itemmoveitem.Enable(True)
-#        print itemid
         #弹出菜单
         self.Bind(wx.EVT_MENU, self.Detail, itemdetail)
-       # self.Bind(wx.EVT_MENU, self.add2group,itemname)
         self.Bind(wx.EVT_MENU, self.addtolist,itemaddtolist)
         self.Bind(wx.EVT_MENU, self.Deleteitem,itemdeleteitem)
         self.PopupMenu(menu)
@@ -247,7 +239,7 @@ class MyFrame(wx.Frame):
                 wx.MessageBox("源文件不存在")
             else:
                 shutil.move(data.rows[self.itemid][2], dstname)
-            event.Skip()
+        event.Skip()
 
     def Sortbytype(self,event):
         f = open('list.list','r')
