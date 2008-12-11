@@ -218,10 +218,17 @@ class MyFrame(wx.Frame):
 
 
 
-    def Open(self,filepath):
-        open=eio.filepath#哥儿几个，帮忙看一下,哪儿格式不对 ^ v ^
-        
-        os.system(open)
+    def Open(self,event):
+#    os.path.splitext(fname)[1]
+        if os.path.splitext(data.rows[self.itemid][2])[1] in ['.doc','.eio']:
+            cmd=str('eio'+' '+'\''+data.rows[self.itemid][2]+'\'')
+        if os.path.splitext(data.rows[self.itemid][2])[1] in ['.pdf']:
+            cmd=str('evince'+' '+'\''+data.rows[self.itemid][2]+'\'')
+        if os.path.splitext(data.rows[self.itemid][2])[1] in ['.chm']:
+            cmd=str('chmsee'+' '+'\''+data.rows[self.itemid][2]+'\'')
+        if os.path.splitext(data.rows[self.itemid][2])[1] in ['.odt']:
+            cmd=str('openoffice'+' '+'\''+data.rows[self.itemid][2]+'\'')
+        os.system(cmd)
     def Move(self,event):
         self.dialog = wx.TextEntryDialog(None,"请输入目的路径","文件移动",os.path.expanduser('~/'),style=wx.OK|wx.CANCEL)
         if self.dialog.ShowModal()==wx.ID_OK:
@@ -311,7 +318,7 @@ class MyFrame(wx.Frame):
         if format == '':
             format = "pdf chm doc odt"
         if path != '' and format != '':
-            trueformat=[]               
+            trueformat=[]
             for item in format.split(' '):
                 if item != '':
                     trueformat.append('.'+item)     
