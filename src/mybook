@@ -14,7 +14,7 @@ import time
 class MyFrame(wx.Frame):
     def __init__(self, *args, **kwds):
         kwds["style"] = wx.DEFAULT_FRAME_STYLE
-           #启动画面splash
+        #启动画面splash
         RunPicture = wx.Image("./picture/run.png").ConvertToBitmap()
         wx.SplashScreen(RunPicture, wx.SPLASH_CENTRE_ON_SCREEN | wx.SPLASH_TIMEOUT,1000, None, -1)
         wx.Yield()
@@ -22,9 +22,9 @@ class MyFrame(wx.Frame):
         # Tool Bar
         self.vToolbar = wx.ToolBar(self, -1)
         self.SetToolBar(self.vToolbar)
-        vTidy = self.vToolbar.AddLabelTool(wx.NewId(), u"整理", wx.Bitmap("./picture/tidy.jpeg", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "", "")
-        vSortbytype = self.vToolbar.AddLabelTool(wx.NewId(), u"按文件类型分组", wx.Bitmap("./picture/sortbytype.jpeg", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "", "")
-        vAbout = self.vToolbar.AddLabelTool(wx.NewId(), u"关于", wx.Bitmap("./picture/about.jpeg", wx.BITMAP_TYPE_ANY),wx.NullBitmap, wx.ITEM_NORMAL, "", "")
+        vTidy = self.vToolbar.AddLabelTool(wx.NewId(), "整理", wx.Bitmap("./picture/tidy.png", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "", "")
+        vSortbytype = self.vToolbar.AddLabelTool(wx.NewId(), "按文件类型分组", wx.Bitmap("./picture/sort.png", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "", "")
+        vAbout = self.vToolbar.AddLabelTool(wx.NewId(), "关于", wx.Bitmap("./picture/about.png", wx.BITMAP_TYPE_ANY),wx.NullBitmap, wx.ITEM_NORMAL, "", "")
         # Tool Bar end
         self.vStaticPath = wx.StaticText(self, -1, u"路径", style=wx.ALIGN_CENTRE)
         self.vInputPath = wx.TextCtrl(self, -1, "/")
@@ -50,10 +50,10 @@ class MyFrame(wx.Frame):
                 self.RightCtrl.SetStringItem(index, col+1, text)
             img = random.randint(0, il_max)
             self.RightCtrl.SetItemImage(index, img, img)
-        self.RightCtrl.SetColumnWidth(0, 200)
-        self.RightCtrl.SetColumnWidth(1, 100)
-        self.RightCtrl.SetColumnWidth(2, wx.LIST_AUTOSIZE)
-#end listctrl
+        self.RightCtrl.SetColumnWidth(0, 150)
+        self.RightCtrl.SetColumnWidth(1, 150)
+        self.RightCtrl.SetColumnWidth(2, 150|wx.LIST_AUTOSIZE)
+        #end listctrl
 
         self.__set_properties()
         self.__do_layout()
@@ -121,9 +121,9 @@ class MyFrame(wx.Frame):
                 self.RightCtrl.SetStringItem(index, col+1, text)
             img = random.randint(0, il_max)
             self.RightCtrl.SetItemImage(index, img, img)                
-        self.RightCtrl.SetColumnWidth(0, 200)
-        self.RightCtrl.SetColumnWidth(1, 100)
-        self.RightCtrl.SetColumnWidth(2, wx.LIST_AUTOSIZE)
+        self.RightCtrl.SetColumnWidth(0, 150)
+        self.RightCtrl.SetColumnWidth(1, 150)
+        self.RightCtrl.SetColumnWidth(2, 150|wx.LIST_AUTOSIZE)
         self.RightCtrl.Bind(wx.EVT_CONTEXT_MENU, self.OnContextMenu)
         event.Skip()
 
@@ -155,12 +155,12 @@ class MyFrame(wx.Frame):
         else:
             itemdetail.Enable(True)
             itemmoveitem.Enable(True)
-          #弹出菜单
+        #弹出菜单
         self.Bind(wx.EVT_MENU, self.Detail, itemdetail)
         self.Bind(wx.EVT_MENU, self.addtolist,itemaddtolist)
         self.Bind(wx.EVT_MENU, self.Deleteitem,itemdeleteitem)
         self.PopupMenu(menu)
-          #最后销毁前面创建的菜单
+        #最后销毁前面创建的菜单
         menu.Destroy()
         event.Skip()
 
@@ -223,13 +223,13 @@ class MyFrame(wx.Frame):
         event.Skip()
 
     def Sortbytype(self,event):
-        f = open('list.list','r')
+        f = open('all.list','r')
         alllines=f.readlines()
         f.close()
         pdf=open('pdf.list','w')
         doc=open('doc.list','w')
         chm=open('chm.list','w')
-        other=open('other.list','w')
+        other=open('other.list','w')        
         for line in alllines:
             if 'pdf' in  os.path.splitext(os.path.basename(line.split('        ')[0]))[1]:
                 pdf.write(line)
@@ -238,7 +238,7 @@ class MyFrame(wx.Frame):
             elif 'doc' in os.path.splitext(os.path.basename(line.split('        ')[0]))[1]:
                 doc.write(line)
             else:
-                other.write(line)
+                other.write(line)           
         else:
             wx.MessageBox("分类成功！！！")
         pdf.close()
@@ -276,7 +276,7 @@ class MyFrame(wx.Frame):
             f.close()
         event.Skip()
     def ListDel(self, event):
-        self.dialog = wx.TextEntryDialog(None,"请输入分裂名称","删除分类","",style=wx.OK|wx.CANCEL)
+        self.dialog = wx.TextEntryDialog(None,"请输入分类名称","删除分类","",style=wx.OK|wx.CANCEL)
         if self.dialog.ShowModal()==wx.ID_OK:
             newname = self.dialog.GetValue()+".list"
             os.remove(newname)
@@ -294,7 +294,7 @@ class MyFrame(wx.Frame):
             for item in format.split(' '):
                 if item != '':
                     trueformat.append('.'+item)     
-        self.fp = open("list.list",'w')   
+        self.fp = open("all.list",'w')   
         self.searcher(path.encode("utf-8"), trueformat)
         self.fp.close()
         event.Skip()
@@ -311,7 +311,7 @@ class MyFrame(wx.Frame):
               
     def Find(self, event): 
         key = self.vInputKey.GetValue()
-        fp = open("list.list", 'r')
+        fp = open("all.list", 'r')
         bo=[]
         count=0
         for line in fp.readlines():
