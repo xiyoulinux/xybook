@@ -142,6 +142,7 @@ class MyFrame(wx.Frame):
       #右键菜单
     def OnContextMenu(self, event):
         self.openitem = wx.NewId()
+        self.openitemDir = wx.NewId()
         self.detail = wx.NewId()
         self.moveitem = wx.NewId()
         self.add2list = wx.NewId()
@@ -151,6 +152,9 @@ class MyFrame(wx.Frame):
         itemopenitem  = wx.MenuItem(menu, self.openitem, "打开文件")
         menu.AppendItem(itemopenitem)
         self.Bind(wx.EVT_MENU, self.Open,itemopenitem)
+        itemopenitemDir  = wx.MenuItem(menu, self.openitemDir, "打开文件夹")
+        menu.AppendItem(itemopenitemDir)
+        self.Bind(wx.EVT_MENU, self.openDir,itemopenitemDir)
         itemdetail = wx.MenuItem(menu, self.detail, "详细信息")
         menu.AppendItem(itemdetail)
         itemmoveitem = wx.MenuItem(menu, self.moveitem, '移动')
@@ -205,6 +209,14 @@ class MyFrame(wx.Frame):
         self.Bind(wx.EVT_CONTEXT_MENU, self.ListRightButton, self.vLeftListBox)
         self.Bind(wx.EVT_LISTBOX, self.ButtonClick, self.vLeftListBox)
         event.Skip()
+
+    def openDir(self,event):
+        if os.path.isdir(os.path.split(data.rows[self.itemid][2])[0]) :
+            cmd=str('nautilus'+' '+'\''+os.path.split(data.rows[self.itemid][2])[0]+'\'')
+        else :
+            wx.MessageBox("目录不存在，清刷新列表")
+        os.system(cmd)
+
 
     def Open(self,event):
         if os.path.splitext(data.rows[self.itemid][2])[1] in ['.pdf']:
