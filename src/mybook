@@ -26,12 +26,16 @@ class MyFrame(wx.Frame):
         vSortbytype = self.vToolbar.AddLabelTool(wx.NewId(), "按文件类型分组", wx.Bitmap("./picture/sort.png", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "", "")
         vAbout = self.vToolbar.AddLabelTool(wx.NewId(), "关于", wx.Bitmap("./picture/about.png", wx.BITMAP_TYPE_ANY),wx.NullBitmap, wx.ITEM_NORMAL, "", "")
         # Tool Bar end
-        self.vStaticPath = wx.StaticText(self, -1, u"路径", style=wx.ALIGN_CENTRE)
+        self.vStaticPath = wx.StaticText(self, -1, u"路径", style=wx.ALIGN_CENTER)
+        self.vStaticPath.SetFont(wx.Font(15, wx.DECORATIVE , wx.BOLD, wx.NORMAL))
+        self.vBeginDir = wx.Button(self, -1, u"选择文件夹")
         self.vInputPath = wx.TextCtrl(self, -1, "/")
-        self.vStaticType = wx.StaticText(self, -1, u"文件类型\n", style=wx.ALIGN_CENTRE)
+        self.vStaticType = wx.StaticText(self, -1, u"文件类型\n",style=wx.ALIGN_CENTER)
+        self.vStaticType.SetFont(wx.Font(15, wx.DECORATIVE , wx.BOLD, wx.NORMAL))
         self.vInputType = wx.TextCtrl(self, -1, "pdf chm odt doc")
         self.vBeginSearch = wx.Button(self, -1, u"开始搜索")
-        self.vStaticKey = wx.StaticText(self, -1, u"请输入关键字", style=wx.ALIGN_CENTRE)
+        self.vStaticKey = wx.StaticText(self, -1, u"请输入关键字",style=wx.ALIGN_CENTER)
+        self.vStaticKey.SetFont(wx.Font(15, wx.DECORATIVE , wx.BOLD, wx.NORMAL))
         self.vInputKey = wx.TextCtrl(self, -1, "")
         self.vBeginFind = wx.Button(self, -1, u"搜索关键字")
         self.vLeftListBox = wx.ListBox(self, -1, choices=[os.path.splitext(item)[0] for item in os.listdir(os.getcwd()) if os.path.splitext(item)[1] in ('.list',)]) 
@@ -62,6 +66,7 @@ class MyFrame(wx.Frame):
         self.Bind(wx.EVT_TOOL, self.Sortbytype, vSortbytype)
         self.Bind(wx.EVT_TOOL, self.About, vAbout)
         self.Bind(wx.EVT_BUTTON, self.Search, self.vBeginSearch)
+        self.Bind(wx.EVT_BUTTON, self.ChooseDir, self.vBeginDir)
         self.Bind(wx.EVT_BUTTON, self.Find, self.vBeginFind)
         self.Bind(wx.EVT_CONTEXT_MENU, self.ListRightButton, self.vLeftListBox)
         self.Bind(wx.EVT_LISTBOX, self.ButtonClick, self.vLeftListBox)
@@ -81,7 +86,8 @@ class MyFrame(wx.Frame):
         sizer_5 = wx.BoxSizer(wx.HORIZONTAL)
         sizer_4 = wx.BoxSizer(wx.HORIZONTAL)
         sizer_4.Add(self.vStaticPath, 1, wx.EXPAND, 0)
-        sizer_4.Add(self.vInputPath, 6, wx.EXPAND, 0)
+        sizer_4.Add(self.vInputPath, 4, wx.EXPAND, 0)
+        sizer_4.Add(self.vBeginDir, 2, wx.EXPAND, 0)
         sizer_4.Add(self.vStaticType, 1, wx.EXPAND, 0)
         sizer_4.Add(self.vInputType, 6, wx.EXPAND, 0)
         sizer_4.Add(self.vBeginSearch, 2, wx.ALL|wx.EXPAND, 0)
@@ -126,6 +132,12 @@ class MyFrame(wx.Frame):
         self.RightCtrl.SetColumnWidth(2, 150|wx.LIST_AUTOSIZE)
         self.RightCtrl.Bind(wx.EVT_CONTEXT_MENU, self.OnContextMenu)
         event.Skip()
+       #选择目录
+    def ChooseDir(self,event):
+        dialog = wx.DirDialog(None, "Choose a directory:",style=wx.DD_DEFAULT_STYLE | wx.DD_NEW_DIR_BUTTON)
+        if dialog.ShowModal() == wx.ID_OK:
+            self.vInputPath = wx.TextCtrl(self, -1, dialog.GetPath())#将选择的路径现示在左边的窗体中
+            self.__do_layout()
 
       #右键菜单
     def OnContextMenu(self, event):
