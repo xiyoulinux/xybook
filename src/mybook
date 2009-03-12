@@ -211,26 +211,12 @@ class MyFrame(wx.Frame):
         event.Skip()
 
     def openDir(self,event):
-        if os.path.isdir(os.path.split(data.rows[self.itemid][2])[0]) :
-            cmd=str('nautilus'+' '+'\''+os.path.split(data.rows[self.itemid][2])[0]+'\'')
-        else :
-            wx.MessageBox("目录不存在，清刷新列表")
+        cmd=str('xdg-open'+' '+'\''+os.path.split(data.rows[self.itemid][2])[0]+'\'')
         os.system(cmd)
 
 
     def Open(self,event):
-        if os.path.splitext(data.rows[self.itemid][2])[1] in ['.pdf']:
-            cmd=str('evince'+' '+'\''+data.rows[self.itemid][2]+'\'')
-        elif os.path.splitext(data.rows[self.itemid][2])[1] in ['.chm']:
-            cmd=str('chmsee'+' '+'\''+data.rows[self.itemid][2]+'\'')
-        elif os.path.splitext(data.rows[self.itemid][2])[1] in ['.odt','.doc']:
-            cmd=str('openoffice'+' '+'\''+data.rows[self.itemid][2]+'\'')
-        else:
-            self.dialog = wx.TextEntryDialog(None,"该文件类型未与软件相关联，选择打开方式","选择打开方式","",style=wx.OK|wx.CANCEL)
-            if self.dialog.ShowModal()==wx.ID_OK:
-                cmd=str(self.dialog.GetValue()+' '+'\''+data.rows[self.itemid][2]+'\'')
-            else:
-                pass
+        cmd=str('xdg-open'+' '+'\''+data.rows[self.itemid][2]+'\'')
         os.system(cmd)
         event.Skip()
 
