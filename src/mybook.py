@@ -10,7 +10,8 @@ import sys, glob, random
 import data
 import shutil
 import time
-
+import about
+import sort
 class MyFrame(wx.Frame):
     def __init__(self, *args, **kwds):
         kwds["style"] = wx.DEFAULT_FRAME_STYLE
@@ -64,7 +65,7 @@ class MyFrame(wx.Frame):
 
         self.Bind(wx.EVT_TOOL, self.Tidy, vTidy)
         self.Bind(wx.EVT_TOOL, self.Sortbytype, vSortbytype)
-        self.Bind(wx.EVT_TOOL, self.About, vAbout)
+        self.Bind(wx.EVT_TOOL, about.About, vAbout)
         self.Bind(wx.EVT_BUTTON, self.Search, self.vBeginSearch)
         self.Bind(wx.EVT_BUTTON, self.ChooseDir, self.vBeginDir)
         self.Bind(wx.EVT_BUTTON, self.Find, self.vBeginFind)
@@ -74,7 +75,7 @@ class MyFrame(wx.Frame):
         # end wxGlade
 
     def __set_properties(self):
-        self.SetTitle("Python e-book Management System")
+        self.SetTitle("Python E-book Management System")
         self.SetSize((900, 650))
         self.vToolbar.Realize()
         # end wxGlade
@@ -235,28 +236,7 @@ class MyFrame(wx.Frame):
         event.Skip()
 
     def Sortbytype(self,event):
-        f = open('all.list','r')
-        alllines=f.readlines()
-        f.close()
-        pdf=open('pdf.list','w')
-        doc=open('doc.list','w')
-        chm=open('chm.list','w')
-        other=open('other.list','w')        
-        for line in alllines:
-            if 'pdf' in  os.path.splitext(os.path.basename(line.split('        ')[0]))[1]:
-                pdf.write(line)
-            elif 'chm' in os.path.splitext(os.path.basename(line.split('        ')[0]))[1]:
-                chm.write(line)
-            elif 'doc' in os.path.splitext(os.path.basename(line.split('        ')[0]))[1]:
-                doc.write(line)
-            else:
-                other.write(line)           
-        else:
-            wx.MessageBox("分类成功！！！")
-        pdf.close()
-        chm.close()
-        doc.close()
-        other.close()
+        sort.sort()
         self.vLeftListBox.Destroy()#销毁之前的窗口
         self.vLeftListBox = wx.ListBox(self, -1, choices=[os.path.splitext(item)[0] for item in os.listdir(os.getcwd()) if os.path.splitext(item)[1] in ('.list',)])
         self.__do_layout()#重新加载窗体布局
@@ -362,19 +342,6 @@ class MyFrame(wx.Frame):
         dlg.ShowModal()
         event.Skip()
 
-    def About(self, event): 
-        description = "E-book Manage System"
-        licence = "GPL v3"
-        info = wx.AboutDialogInfo()
-        info.SetVersion('1.0')
-        info.SetName('PEMS')
-        info.SetCopyright('(C) 2008 XiYouLinux')
-        info.SetWebSite('http://www.xiyoulinux.cn')
-        info.SetDescription(description)
-        info.SetLicence(licence)
-        info.AddDeveloper('Author:\nLi Lei                 lilei1008@gmail.com\nFeng LiQiang     blueskyflq@gmail.com\nMi ChengGang  michenggang@gmail.com\nPan Meng          xypmdxx@gmail.com')
-        wx.AboutBox(info)
-        event.Skip()
 
 class MoveDialog(wx.Dialog):
     def __init__(self):
